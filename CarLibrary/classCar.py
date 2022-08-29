@@ -204,16 +204,21 @@ class Smart:
             muestras
         EOF
         """
-        if exists(FILENAME):
-            f = open(FILENAME, 'r')
-            self.__mpg = float(f.readline())
-            self.__mpgMuestras = float(f.readline())
-            self.__fuelTank = float(f.readline())
+        try:
+            if exists(FILENAME):
+                f = open(FILENAME, 'r')
+                self.__mpg = float(f.readline())
+                self.__mpgMuestras = float(f.readline())
+                self.__fuelTank = float(f.readline())
 
-        else:
-            f = open(FILENAME, 'x')
-            f.write('0\n0\n0')
-        f.close()
+            else:
+                f = open(FILENAME, 'x')
+                f.write('0\n0\n0')
+            f.close()
+        except Exception as e:
+            self.__mpg = 0
+            self.__mpgMuestras = 0
+            self.__fuelTank = 0
 
     def __saveDataToFile(self):
         """
