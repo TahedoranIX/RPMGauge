@@ -73,8 +73,6 @@ sin necesidad de sacar la Rpi de la caja.
 - [raspberry](https://www.raspberrypi.com/documentation/computers/configuration.html#setting-up-a-routed-wireless-access-point)
 
 ### TO DO:
-- REESCRIBIR LIBRERIA LCD EN C++
-- REESCRIBIR CARLIBRARY EN C++
-- REESCRIBIR O BUSCAR UNA LIBRERIA PARA ROTATORIOS 
-- REESCRIBIR MAIN EN C++ 
+- REESCRIBIR TODO EL CÓDIGO EN C++
+- APLICAR PATRONES DE DISEÑO AL CÓDIGO
 - https://github.com/ejvaughan/obdii
