@@ -73,6 +73,7 @@ sin necesidad de sacar la Rpi de la caja.
 - [raspberry](https://www.raspberrypi.com/documentation/computers/configuration.html#setting-up-a-routed-wireless-access-point)
 
 ### TO DO:
+- GUARDADO DE MUESTRAS CADA KM NO CADA SEGUNDO
 - REESCRIBIR TODO EL CÓDIGO EN C++
 - APLICAR PATRONES DE DISEÑO AL CÓDIGO
 - https://github.com/ejvaughan/obdii
