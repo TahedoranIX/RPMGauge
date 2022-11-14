@@ -244,25 +244,25 @@ class Smart:
         if self.__fuelTank > 0:  # Si hay litros en el tanque (más estilistico)
             self.__fuelTank -= self.__LPerS * 2  # Restamos la cantidad de combustible que queda.
 
-        if self.__throttlePosition > THROTTLE_MINIMUM:  # Estoy acelerando?
-            if self.__speed > self.__minimumSpeed:  # Si voy a velocidad mayor que parada, cuenta consumo.
-                if self.__archivoGuardado:  # Si mpg guardado en archivo, marca flag.
-                    self.__archivoGuardado = False
 
+        if self.__speed > self.__minimumSpeed:  # Si voy a velocidad mayor que parada, cuenta consumo.
+            if self.__archivoGuardado:  # Si mpg guardado en archivo, marca flag.
+                self.__archivoGuardado = False
+            if self.__throttlePosition > THROTTLE_MINIMUM:  # Estoy acelerando?
                 self.__instMPG = round(self.__LPerS * (360000 / (self.__speed + 0.0000001)),
                                        1)  # Calculamos L/100km en base a velocidad y L/s
                 self.__mpg = ((self.__mpg * self.__mpgMuestras + self.__instMPG) / (
                             self.__mpgMuestras + 1))  # Realizamos la media de consumo.
                 self.__mpgMuestras += 1
-
-            else:  # Si voy a velocidad menor que parada, consumo infinito.
-                self.__instMPG = '---'
-        else:
-            self.__instMPG = 0.0
-            if self.__speed > self.__minimumSpeed:
+            else:
+                self.__instMPG = 0.0
                 self.__mpg = ((self.__mpg * self.__mpgMuestras + self.__instMPG) / (
-                            self.__mpgMuestras + 1))  # Realizamos la media de consumo.
+                                self.__mpgMuestras + 1))  # Realizamos la media de consumo.
                 self.__mpgMuestras += 1
+
+        else:  # Si voy a velocidad menor que parada, consumo infinito.
+            self.__instMPG = '---'
+            
         if self.__speed < self.__minimumSpeed and not self.__archivoGuardado:
             self.__saveDataToFile()
 
