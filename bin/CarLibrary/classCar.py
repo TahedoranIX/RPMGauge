@@ -1,7 +1,7 @@
 import time as t
-from OBDLibrary import obd
-from LCDLibrary.lcdLibrary import LCD
-from RotaryLibrary.encoder import Encoder
+from lib.OBDLibrary import obd
+from lib.LCDLibrary.lcdLibrary import LCD
+from lib.RotaryLibrary.encoder import Encoder
 from os.path import exists
 
 

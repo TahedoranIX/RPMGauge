@@ -1,0 +1,139 @@
+@startuml
+
+skinparam classAttributeIconSize 0
+
+class Coche {
+
+}
+Coche --> Encoder
+Coche --> Menu
+
+class Encoder {
+Encoder(e1, e2, eb) : Encoder
+getValue() : int
+getButtonValue() : bool
+}
+
+package util <<Folder>> {
+    interface Observer {
+    +update(observable: Observable)
+    }
+    abstract Observable {
+    +addObserver(observer: Observer)
+    +deleteObserver(observer: Observer)
+    +notifyObserver()
+    }
+}
+Observable o-left-> Observer
+
+class LCD {
+LCD(rs, en, d4, d5, d6, d7) : LCD
+writeMessage(message : String)
+clearDisplay()
+moveCursor(cursor, direction, times)
+display(display, cursor, blink)
+home()
+writeRAM()
+}
+
+class LCDUtil {
+-arrayMenu[2] : Component
+-lcd : LCD
++print() - Print by LCD
+}
+LCDUtil ..|> Menu
+LCDUtil --|> LCD
+
+class Console {
++print() - Print by Console
+}
+Console ..|> Menu
+
+class OBD {
+OBD(port, fast, timeout) : OBD
+query(obd.commands.{}).value.magnitude : String
+close()
+}
+
+class OBDUtil {
+-obd : OBD
+}
+OBDUtil --|> Observable
+OBDUtil --|> OBD
+
+abstract ECU {
+-commands :
+
++print()
+}
+ECU ..|> Observer
+ECU o--> Menu
+ECU --|> Menu
+'ECU --|> Component
+
+'abstract Component {
+'+print()
+'}
+'Component o--> Menu
+'Component --|> Menu
+
+class TimeTurbo {
+-time : Duration
+-calculateTime()
++print()
+}
+TimeTurbo --|> ECU
+
+class Gasolina {
+
++print()
+}
+Gasolina --|> ECU
+
+abstract RPM {
+
++print()
+}
+RPM --|> ECU
+
+class RPMNumber {
+
++print()
+}
+RPMNumber --|> RPM
+
+class RPMGraph {
+
++print()
+}
+RPMGraph --|> RPM
+
+class Refrigerante {
+
++print()
+}
+Refrigerante --|> ECU
+
+interface Menu {
++print()
+}
+
+note "Clase main" as Main
+Main .. Coche
+
+note "This is Singleton" as Singleton
+Singleton .. OBDUtil
+Singleton .. LCDUtil
+
+
+
+
+
+
+
+
+
+
+
+
+@enduml
