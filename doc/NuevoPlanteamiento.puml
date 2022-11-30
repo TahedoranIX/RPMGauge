@@ -2,18 +2,6 @@
 
 skinparam classAttributeIconSize 0
 
-class Coche {
-
-}
-Coche --> Encoder
-Coche --> Menu
-
-class Encoder {
-Encoder(e1, e2, eb) : Encoder
-getValue() : int
-getButtonValue() : bool
-}
-
 package util <<Folder>> {
     interface Observer {
     +update(observable: Observable)
@@ -24,7 +12,54 @@ package util <<Folder>> {
     +notifyObserver()
     }
 }
-Observable o-left-> Observer
+Observable o-right-> Observer
+
+class Coche {
+-encoder : Encoder
+-printHub : PrintHub
+-menuList[] : List<Menu>
++print(text)
+}
+Coche o--> PrintHub
+Coche --> Menu
+Coche --> Encoder
+
+class Console {
++print(text) - Print by Console
+}
+Console ..|> PrintHub
+
+class Coolant {
+-coolOBD
++update()
++print()
+}
+Coolant --|> ECU
+
+interface ECU {
++print() : String
++update()
+}
+ECU ..|> Observer
+
+class Encoder {
+Encoder(e1, e2, eb) : Encoder
+getValue() : int
+getButtonValue() : bool
+}
+
+class Gas {
+-instMPG
+-mpg
+-mpgSamples
+-commands{} : OBDResponse
+-file : File
+-calculateGas()
++print()
++update()
+}
+Gas --|> ECU
+Gas --> File
 
 class LCD {
 LCD(rs, en, d4, d5, d6, d7) : LCD
@@ -36,68 +71,44 @@ home()
 writeRAM()
 }
 
-class LCDUtil {
--arrayMenu[2] : Component
+class LCDSingle {
 -lcd : LCD
-+print() - Print by LCD
++print(text) - Print by LCD
 }
-LCDUtil ..|> Menu
-LCDUtil --|> LCD
+LCDSingle ..|> PrintHub
+LCDSingle --|> LCD
 
-class Console {
-+print() - Print by Console
+class Menu {
+-ecuList[2] : List<ECU>
++print() : String[] ECU class
 }
-Console ..|> Menu
+Menu o--> ECU
 
 class OBD {
+
 OBD(port, fast, timeout) : OBD
 query(obd.commands.{}).value.magnitude : String
 close()
 }
 
-class OBDUtil {
+class OBDSingle {
 -obd : OBD
 }
-OBDUtil --|> Observable
-OBDUtil --|> OBD
+OBDSingle --|> Observable
+OBDSingle --|> OBD
 
-abstract ECU {
--commands :
-
-+print()
+interface PrintHub {
++print(text)
 }
-ECU ..|> Observer
-ECU o--> Menu
-ECU --|> Menu
-'ECU --|> Component
-
-'abstract Component {
-'+print()
-'}
-'Component o--> Menu
-'Component --|> Menu
-
-class TimeTurbo {
--time : Duration
--calculateTime()
-+print()
-}
-TimeTurbo --|> ECU
-
-class Gasolina {
-
-+print()
-}
-Gasolina --|> ECU
 
 abstract RPM {
-
-+print()
+-rpmOBD
++update()
+#print()
 }
 RPM --|> ECU
 
 class RPMNumber {
-
 +print()
 }
 RPMNumber --|> RPM
@@ -108,22 +119,35 @@ class RPMGraph {
 }
 RPMGraph --|> RPM
 
-class Refrigerante {
-
-+print()
+class File {
+-FILENAME
++saveFile(commands[])
+-openFile() : commands[]
 }
-Refrigerante --|> ECU
 
-interface Menu {
+class TimeTurbo {
+-speedOBD
+-coolOBD
+-time : Duration
+-calculateTime()
 +print()
++update()
 }
+TimeTurbo --|> ECU
+
+
+
+note "External Library" as Lib
+Lib .. LCD
+Lib .. OBD
+Lib .. Encoder
 
 note "Clase main" as Main
 Main .. Coche
 
 note "This is Singleton" as Singleton
-Singleton .. OBDUtil
-Singleton .. LCDUtil
+Singleton .. OBDSingle
+Singleton .. LCDSingle
 
 
 

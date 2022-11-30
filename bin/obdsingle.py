@@ -6,33 +6,32 @@ from Observers.observable import Observable
 from Observers.observer import Observer
 from Utils.Singleton import SingletonMeta
 
-
-class OBDUtil(metaclass=SingletonMeta, Observable):
+class OBDSingle(metaclass=SingletonMeta, Observable):
 
     def __init__(self):
-        self.__obd = obd.OBD()
-        self.__observers: List[Observer] = []
-        self.__commands = {}
-        self.__exit = False
+        self.obd = obd.OBD()
+        self.observers: List[Observer] = []
+        self.commands = {}
+        self.exit = False
         thread = Thread(target=self.tick(), args=(10,))
         thread.start()
         thread.join()
 
     def getCommands(self):
-        return self.__commands
+        return self.commands
     def attach(self, observer: Observer) -> None:
         print("Subject: Attached an observer.")
-        self.__observers.append(observer)
+        self.observers.append(observer)
 
     def detach(self, observer: Observer) -> None:
-        self.__observers.remove(observer)
+        self.observers.remove(observer)
 
     """
     The subscription management methods.
     """
 
     def notify(self) -> None:
-        for observer in self.__observers:
+        for observer in self.observers:
             observer.update(self)
 
     def __connection(self):
@@ -42,13 +41,13 @@ class OBDUtil(metaclass=SingletonMeta, Observable):
         pass
 
     def tick(self):
-        while not self.__exit:
+        while not self.exit:
             self.getParams()
             self.notify()
             t.sleep(2)
 
     def destroy(self):
-        self.__exit = True
+        self.exit = True
 
 
 if __name__ == "__main__":

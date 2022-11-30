@@ -1,12 +1,12 @@
-from abc import ABC, abstractmethod
-from ecu import ECU
+from abc import ABC
+
+from ECU_commands.ecu import ECU
 
 MINIMUM_RPM = 1200
 MAXIMUM_RPM = 5500
 
-class RPM(ABC, ECU):
+class RPM(ECU, ABC):
     def __init__(self):
-        ECU.__init__(self)
         self.__rpmSegments = int((MAXIMUM_RPM - MINIMUM_RPM) / 16)
 
     def print(self):

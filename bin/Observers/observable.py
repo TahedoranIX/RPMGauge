@@ -1,7 +1,5 @@
 from abc import ABC, abstractmethod
-
 from Observers.observer import Observer
-
 
 class Observable(ABC):
     """

@@ -3,11 +3,11 @@ from time import sleep
 
 LOW_TIME = 0.00004
 HIGH_TIME = 0.00153
-#LOW_TIME = 0.001
-#HIGH_TIME = 1
 GPIO.setwarnings(False)
 
 class LCD:
+
+
     def __init__(self, d4, d5, d6, d7, en, rs):
         """Pin set and LCD init"""
 
@@ -77,7 +77,7 @@ class LCD:
 
         :param address: 6bit Address(5-0)
         """
-        self.__sendCommand(rs=0, data=[0,1,address[0],address[1],address[2],address[3],address[4],address[5]], time=LOW_TIME)
+        self.__sendCommand(rs=0, data=[0,1,[0],address[1],address[2],address[3],address[4],address[5]], time=LOW_TIME)
 
     def __setDDRAM(self, address):
         """

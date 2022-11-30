@@ -1,7 +1,7 @@
-# from Decorator.component import Component
+# from ECU_commands.component import Component
 import time as t
 
-from Decorator.Decorators.ECU.ecu import ECU
+from Decorator.ecu import ECU
 
 MAX_TIME = 60
 
