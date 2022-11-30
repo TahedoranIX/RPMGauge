@@ -1,6 +1,19 @@
-from menu import Menu
-from lib.LCDLibrary.lcdLibrary import LCD
-from Utils.Singleton import SingletonMeta
-class LCDSingle(metaclass=SingletonMeta, Menu):
+import time
 
-    pass
+from constants import WAIT_TIME
+from lib.LCDLibrary.lcdLibrary import LCD
+from printhub import PrintHub
+
+
+class LCDSingle(PrintHub, object):
+    lcd = None
+    @classmethod
+    def __init__(cls, d4=None, d5=None, d6=None, d7=None, en=None, rs=None):
+        cls.lcd = LCD(d4, d5, d6, d7, en, rs)
+
+    @classmethod
+    def print(cls, text):
+        cls.lcd.clearDisplay()
+        cls.lcd.writeMessage(text[0]+'\n'+text[1])
+        time.sleep(WAIT_TIME)
+

@@ -1,34 +1,40 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 
 from ECU_commands.ecu import ECU
+from Observers.observable import Observable
+from constants import MAXIMUM_RPM, MINIMUM_RPM
 
-MINIMUM_RPM = 1200
-MAXIMUM_RPM = 5500
 
 class RPM(ECU, ABC):
     def __init__(self):
-        self.__rpmSegments = int((MAXIMUM_RPM - MINIMUM_RPM) / 16)
+        super().__init__()
+        self.rpm = 5
+        self.rpmSegments = int((MAXIMUM_RPM - MINIMUM_RPM) / 16)
 
+    @abstractmethod
     def print(self):
-        return 'Temp: ' + self.__command["coolant"] + ' C'
+        pass
+
+    def update(self, commands: Observable):
+        command = commands.getCommands()
+        self.rpm = command["rpm"]
 
 
 class RPMNumber(RPM):
     def __init__(self):
-        RPM.__init__(self)
+        super().__init__()
 
     def print(self):
-        return 'RPM: ' + self.__command["rpm"]
-
+        return 'RPM: ' + str(self.rpm)
 
 class RPMGraph(RPM):
     def __init__(self):
-        ECU.__init__(self)
+        super().__init__()
 
     def print(self):
-        segment = int((float(self.__command["rpm"]) - MINIMUM_RPM) / self.__rpmSegments)
-        segmentList = []
+        segment = int((float(self.rpm) - MINIMUM_RPM) / self.rpmSegments)
+        segmentList = ""
         while segment > 0:
-            segmentList.append(255)
+            segmentList = segmentList + 'ÿ'
             segment = segment - 1
         return segmentList

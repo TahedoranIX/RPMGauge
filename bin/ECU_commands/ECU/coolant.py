@@ -1,12 +1,14 @@
 from ECU_commands.ecu import ECU
+from Observers.observable import Observable
 
 
 class Coolant(ECU):
-    def __init__(self):
-        self.coolOBD = None
+    def __init__(self) -> None:
+        super().__init__()
+        self.coolOBD = 0
 
-    def update(self, commands):
-        self.coolOBD = commands["coolant"]
+    def update(self, commands: Observable):
+        self.coolOBD = commands.getCommands()["coolant"]
 
     def print(self):
-        return 'Temp: ' + self.coolOBD + ' C'
+        return 'Temp: ' + str(self.coolOBD) + ' C'

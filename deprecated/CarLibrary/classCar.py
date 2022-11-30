@@ -1,7 +1,7 @@
 import time as t
-from lib.OBDLibrary import obd
-from lib.LCDLibrary.lcdLibrary import LCD
-from lib.RotaryLibrary.encoder import Encoder
+from lib import obd
+from lib import LCD
+from lib import Encoder
 from os.path import exists
 
 
@@ -54,7 +54,7 @@ class Smart:
         # 1º Stage - Declarations
         self.__lcd = LCD(rs=rs, en=en, d4=d4, d5=d5, d6=d6, d7=d7)  # ./LCDLibrary/lcdlibrary.py
 
-        self.__obd = self.__connection()  # ./OBDLibrary/obd.py
+        self.__obd = self.__connection()  # ./obd/obd.py
         self.__encoder = Encoder(e1, e2, eb)  # ./RotaryLibrary/encoder.py
 
         if self.__debug:

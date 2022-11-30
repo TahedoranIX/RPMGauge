@@ -1,4 +1,4 @@
-from CarLibrary.classCar import Smart
+from deprecated.CarLibrary.classCar import Smart
 import time as t
 
 MINIMUM_SPEED = 5

@@ -1,9 +1,10 @@
-from PrintHub import PrintHub
-from Utils.Singleton import SingletonMeta
+from printhub import PrintHub
 
+class Console(PrintHub):
+    def __init__(self):
+        pass
 
-class Console(metaclass=SingletonMeta, PrintHub):
     def print(self, text):
         for i in text:
             print(i)
-            print("\n")
+        print("\n")

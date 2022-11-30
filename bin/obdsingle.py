@@ -1,57 +1,82 @@
+from threading import Thread
 from typing import List
 import time as t
-from lib.OBDLibrary import obd
-from threading import Thread
+import obd.obd
 from Observers.observable import Observable
 from Observers.observer import Observer
-from Utils.Singleton import SingletonMeta
+from constants import PORT, WAIT_TIME
+from lcdsingle import LCDSingle
 
-class OBDSingle(metaclass=SingletonMeta, Observable):
 
-    def __init__(self):
-        self.obd = obd.OBD()
-        self.observers: List[Observer] = []
-        self.commands = {}
-        self.exit = False
-        thread = Thread(target=self.tick(), args=(10,))
+class OBDSingle(Observable, object):
+    observers: List[Observer] = []
+    printer = None
+    obd = None
+    commands = {}
+    exit = False
+
+    @classmethod
+    def __init__(cls, printhub=LCDSingle.lcd) -> None:
+        # obd.logger.setLevel(obd.logging.DEBUG)
+        cls.printer = printhub
+        cls.obd = cls.connection()
+        cls.commands = {}
+        cls.exit = False
+        thread = Thread(target=cls.tick)
         thread.start()
-        thread.join()
 
-    def getCommands(self):
-        return self.commands
-    def attach(self, observer: Observer) -> None:
-        print("Subject: Attached an observer.")
-        self.observers.append(observer)
-
-    def detach(self, observer: Observer) -> None:
-        self.observers.remove(observer)
-
-    """
-    The subscription management methods.
-    """
-
-    def notify(self) -> None:
-        for observer in self.observers:
-            observer.update(self)
-
-    def __connection(self):
-        pass
-
-    def getParams(self):
-        pass
-
-    def tick(self):
-        while not self.exit:
-            self.getParams()
-            self.notify()
+    @classmethod
+    def connection(cls):
+        try:
+            connection = obd.OBD(PORT)
+            while not connection.is_connected():
+                cls.printer.print("Not connected")
+                t.sleep(1)
+                cls.printer.print("Connecting...")
+                connection = obd.OBD(PORT, fast=False, timeout=30)
+            return connection
+        except:
+            cls.printer.print("Problems OBD")
             t.sleep(2)
+            return cls.connection()
 
-    def destroy(self):
-        self.exit = True
+    @classmethod
+    def getCommands(cls):
+        return cls.commands
 
+    @classmethod
+    def attach(cls, observer: Observer) -> None:
+        cls.observers.append(observer)
 
-if __name__ == "__main__":
-    thread = Thread(target=threaded_function, args=(10,))
-    thread.start()
-    thread.join()
-    print("thread finished...exiting")
+    @classmethod
+    def detach(cls, observer: Observer) -> None:
+        cls.observers.remove(observer)
+
+    @classmethod
+    def notify(cls) -> None:
+        for observer in cls.observers:
+            observer.update(OBDSingle)
+
+    @classmethod
+    def getParams(cls):
+        cls.commands["speed"] = int(cls.obd.query(obd.commands.SPEED).value.magnitude)
+        cls.commands["rpm"] = str(cls.obd.query(obd.commands.RPM).value.magnitude)
+        cls.commands["coolant"] = str(cls.obd.query(obd.commands.COOLANT_TEMP).value.magnitude)
+        cls.commands["throttle"] = int(cls.obd.query(obd.commands.THROTTLE_POS).value.magnitude)
+        cls.commands["maf"] = str(cls.obd.query(obd.commands.MAF).value.magnitude)
+        # cls.commands["speed"] = 10
+        # cls.commands["rpm"] = 1001
+        # cls.commands["coolant"] = 85
+        # cls.commands["throttle"] = 0
+        # cls.commands["maf"] = 0
+
+    @classmethod
+    def tick(cls):
+        while not cls.exit:
+            cls.getParams()
+            cls.notify()
+            t.sleep(WAIT_TIME)
+
+    @classmethod
+    def destroy(cls):
+        cls.exit = True

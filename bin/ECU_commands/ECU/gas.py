@@ -2,10 +2,12 @@ from ECU_commands.ecu import ECU, MINIMUM_SPEED
 
 class Gas(ECU):
     def __init__(self):
+        super().__init__()
         self.instMPG = None
         self.mpg = None
         self.mpgSamples = None
         self.commands = {}
+        self.stopped = False
 
     def update(self, commands):
         allCommands = commands.getCommands()

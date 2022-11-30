@@ -6,6 +6,7 @@ import RPi.GPIO as GPIO
 class Encoder:
 
     def __init__(self, leftPin, rightPin, buttonPin, callback=None):
+        GPIO.setmode(GPIO.BCM)
         self.leftPin = leftPin
         self.rightPin = rightPin
         self.buttonPin = buttonPin

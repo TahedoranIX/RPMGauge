@@ -8,7 +8,7 @@ MAX_TIME = 60
 
 class TimeTurbo(ECU):
     def __init__(self):
-        super(ECU).__init__()
+        super().__init__()
         self.__finalTime = 0
         self.__actualTime = 0
 
