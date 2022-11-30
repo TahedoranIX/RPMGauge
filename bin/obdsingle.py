@@ -5,7 +5,8 @@ import obd.obd
 from Observers.observable import Observable
 from Observers.observer import Observer
 from constants import PORT, WAIT_TIME
-from lcdsingle import LCDSingle
+from Interfaces.lcdsingle import LCDSingle
+from lib import obd
 
 
 class OBDSingle(Observable, object):

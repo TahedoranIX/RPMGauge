@@ -1,7 +1,7 @@
 from typing import List
 
 from lib.RotaryLibrary.encoder import Encoder
-from printhub import PrintHub
+from Interfaces.printhub import PrintHub
 from threading import Thread
 from menu import Menu
 
