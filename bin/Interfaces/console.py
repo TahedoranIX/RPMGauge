@@ -1,10 +1,17 @@
-from printhub import PrintHub
+import time
+from typing import List
+
+from Interfaces.printhub import PrintHub
+from constants import WAIT_TIME
+
 
 class Console(PrintHub):
-    def __init__(self):
-        pass
 
     def print(self, text):
-        for i in text:
-            print(i)
+        if isinstance(text, List):
+            for i in text:
+                print(i)
+        else:
+            print(text)
         print("\n")
+        time.sleep(WAIT_TIME)

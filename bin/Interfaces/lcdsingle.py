@@ -1,8 +1,8 @@
 import time
 
+from Interfaces.printhub import PrintHub
 from constants import WAIT_TIME
 from lib.LCDLibrary.lcdLibrary import LCD
-from printhub import PrintHub
 
 
 class LCDSingle(PrintHub, object):

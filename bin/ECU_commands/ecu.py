@@ -5,7 +5,6 @@ from Observers.observable import Observable
 from Observers.observer import Observer
 from obdsingle import OBDSingle
 
-MINIMUM_SPEED = 5
 
 
 class ECU(Observer, ABC):

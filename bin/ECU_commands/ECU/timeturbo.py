@@ -1,28 +1,25 @@
-# from ECU_commands.component import Component
 import time as t
-
-from Decorator.ecu import ECU
-
-MAX_TIME = 60
+from ECU_commands.ecu import ECU
+from constants import WAIT_TURBOTIME, MINIMUM_SPEED
 
 
 class TimeTurbo(ECU):
     def __init__(self):
         super().__init__()
-        self.__finalTime = 0
-        self.__actualTime = 0
+        self.finalTime = 0
+        self.stopped = False
 
     def update(self, commands):
-        ECU.__commands = commands
-        if commands["speed"] < ECU.MINIMUM_SPEED and not self._stopped:
-            self.__stopped = True
-            self.__finalTime = t.time() + MAX_TIME
-        elif commands["speed"] > ECU.MINIMUM_SPEED and self.__stopped:
-            self.__stopped = False
+        allCommands = commands.getCommands()
+        if allCommands["speed"] < MINIMUM_SPEED and not self.stopped:
+            self.stopped = True
+            self.finalTime = t.time() + WAIT_TURBOTIME
+        elif allCommands["speed"] > MINIMUM_SPEED and self.stopped:
+            self.stopped = False
 
     def print(self):
-        if ECU.__stopped:
-            time = self.__finalTime - self.__actualTime
+        if self.stopped:
+            time = self.finalTime - t.time()
             if time <= 0:
                 return "Engine OFF"
             else:

@@ -7,9 +7,9 @@ package util <<Folder>> {
     +update(observable: Observable)
     }
     abstract Observable {
-    +addObserver(observer: Observer)
-    +deleteObserver(observer: Observer)
-    +notifyObserver()
+    +attach(observer: Observer)
+    +detach(observer: Observer)
+    +notify()
     }
 }
 Observable o-right-> Observer
@@ -17,8 +17,8 @@ Observable o-right-> Observer
 class Coche {
 -encoder : Encoder
 -printHub : PrintHub
--menuList[] : List<Menu>
-+print(text)
+-menuList : List<Menu>
++mainLoop()
 }
 Coche o--> PrintHub
 Coche --> Menu
@@ -93,6 +93,17 @@ close()
 
 class OBDSingle {
 -obd : OBD
+-printer : PrintHub
+-observers : List<Observer>
+-commands : Dictionary<String>
+-exit : Bool
+-connection()
+-getParams()
+-tick()
++destroy()
++getCommands()
+
+
 }
 OBDSingle --|> Observable
 OBDSingle --|> OBD
@@ -102,7 +113,7 @@ interface PrintHub {
 }
 
 abstract RPM {
--rpmOBD
+-rpm : float
 +update()
 #print()
 }
@@ -114,7 +125,7 @@ class RPMNumber {
 RPMNumber --|> RPM
 
 class RPMGraph {
-
+-rpmSegments : int
 +print()
 }
 RPMGraph --|> RPM

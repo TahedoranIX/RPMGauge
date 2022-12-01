@@ -3,13 +3,16 @@
 
 import RPi.GPIO as GPIO
 
+
 class Encoder:
+
+    buttonPin = None
 
     def __init__(self, leftPin, rightPin, buttonPin, callback=None):
         GPIO.setmode(GPIO.BCM)
         self.leftPin = leftPin
         self.rightPin = rightPin
-        self.buttonPin = buttonPin
+        Encoder.buttonPin = buttonPin
         self.valueButton = 0
         self.value = 0
         self.state = '11'
@@ -17,45 +20,45 @@ class Encoder:
         self.callback = callback
         GPIO.setup(self.leftPin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
         GPIO.setup(self.rightPin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-        GPIO.setup(self.buttonPin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+        GPIO.setup(Encoder.buttonPin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
         GPIO.add_event_detect(self.leftPin, GPIO.BOTH, callback=self.transitionOccurred)
         GPIO.add_event_detect(self.rightPin, GPIO.BOTH, callback=self.transitionOccurred)
-        #GPIO.add_event_detect(self.buttonPin, GPIO.FALLING, callback=self.buttonPressed)
+        # GPIO.add_event_detect(self.buttonPin, GPIO.FALLING, callback=self.buttonPressed)
 
     def transitionOccurred(self, channel):
         p1 = GPIO.input(self.leftPin)
         p2 = GPIO.input(self.rightPin)
         newState = "{}{}".format(p1, p2)
-        if self.state == "00": # Resting position
-            if newState == "01": # Turned right 1
+        if self.state == "00":  # Resting position
+            if newState == "01":  # Turned right 1
                 self.direction = "R"
-            elif newState == "10": # Turned left 1
+            elif newState == "10":  # Turned left 1
                 self.direction = "L"
 
-        elif self.state == "01": # R1 or L3 position
-            if newState == "11": # Turned right 1
+        elif self.state == "01":  # R1 or L3 position
+            if newState == "11":  # Turned right 1
                 self.direction = "R"
-            elif newState == "00": # Turned left 1
+            elif newState == "00":  # Turned left 1
                 if self.direction == "L":
                     self.value = self.value - 1
                     if self.callback is not None:
                         self.callback(self.value, self.direction)
 
-        elif self.state == "10": # R3 or L1
-            if newState == "11": # Turned left 1
+        elif self.state == "10":  # R3 or L1
+            if newState == "11":  # Turned left 1
                 self.direction = "L"
-            elif newState == "00": # Turned right 1
+            elif newState == "00":  # Turned right 1
                 if self.direction == "R":
                     self.value = self.value + 1
                     if self.callback is not None:
                         self.callback(self.value, self.direction)
 
-        else: # self.state == "11"
-            if newState == "01": # Turned left 1
+        else:  # self.state == "11"
+            if newState == "01":  # Turned left 1
                 self.direction = "L"
-            elif newState == "10": # Turned right 1
+            elif newState == "10":  # Turned right 1
                 self.direction = "R"
-            elif newState == "00": # Skipped an intermediate 01 or 10 state, but if we know direction then a turn is complete
+            elif newState == "00":  # Skipped an intermediate 01 or 10 state, but if we know direction then a turn is complete
                 if self.direction == "L":
                     self.value = self.value - 1
                     if self.callback is not None:
@@ -67,13 +70,9 @@ class Encoder:
 
         self.state = newState
 
-    #def buttonPressed(self, channel):
-    #    self.valueButton = not self.valueButton
-
-
     def getValue(self):
         return self.value
 
-    def getButtonValue(self):
-        return not GPIO.input(self.buttonPin)
-
+    @classmethod
+    def getButtonValue(cls):
+        return not GPIO.input(cls.buttonPin)

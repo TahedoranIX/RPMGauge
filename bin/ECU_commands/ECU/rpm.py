@@ -8,8 +8,7 @@ from constants import MAXIMUM_RPM, MINIMUM_RPM
 class RPM(ECU, ABC):
     def __init__(self):
         super().__init__()
-        self.rpm = 5
-        self.rpmSegments = int((MAXIMUM_RPM - MINIMUM_RPM) / 16)
+        self.rpm = 0
 
     @abstractmethod
     def print(self):
@@ -30,6 +29,7 @@ class RPMNumber(RPM):
 class RPMGraph(RPM):
     def __init__(self):
         super().__init__()
+        self.rpmSegments = int((MAXIMUM_RPM - MINIMUM_RPM) / 16)
 
     def print(self):
         segment = int((float(self.rpm) - MINIMUM_RPM) / self.rpmSegments)
