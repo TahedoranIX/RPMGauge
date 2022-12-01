@@ -12,7 +12,7 @@ from obdsingle import OBDSingle
 encoder = Encoder(20, 16, 21)
 lcd = LCDSingle(26, 19, 13, 6, 5, 0)
 console = Console()
-obd = OBDSingle(console)
+obd = OBDSingle()
 
 
 menu1 = Menu(Coolant(), RPMNumber())

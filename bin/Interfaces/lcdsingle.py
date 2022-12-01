@@ -1,4 +1,5 @@
 import time
+from typing import List
 
 from Interfaces.printhub import PrintHub
 from constants import WAIT_TIME
@@ -14,6 +15,9 @@ class LCDSingle(PrintHub, object):
     @classmethod
     def print(cls, text):
         cls.lcd.clearDisplay()
-        cls.lcd.writeMessage(text[0]+'\n'+text[1])
+        if isinstance(text, List):
+            cls.lcd.writeMessage(text[0] + '\n' + text[1])
+        else:
+            cls.lcd.writeMessage(text)
         time.sleep(WAIT_TIME)
 

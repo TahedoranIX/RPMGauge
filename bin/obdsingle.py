@@ -17,7 +17,7 @@ class OBDSingle(Observable, object):
     exit = False
 
     @classmethod
-    def __init__(cls, printhub=LCDSingle.lcd) -> None:
+    def __init__(cls, printhub=LCDSingle) -> None:
         # obd.logger.setLevel(obd.logging.DEBUG)
         cls.printer = printhub
         cls.obd = cls.connection()
@@ -28,8 +28,10 @@ class OBDSingle(Observable, object):
 
     @classmethod
     def __del__(cls):
-        cls.destroy()
-        cls.obd.close()
+        try:
+            cls.obd.close()
+        except:
+            pass
 
     @classmethod
     def connection(cls):
