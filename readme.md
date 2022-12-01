@@ -1,7 +1,7 @@
 # CuentaRevoluciones
 Cuentarrevoluciones hecho con RPi zero W con pantalla lcd 16x2 y rotary-encoder. Funciona mediante OBDII.
 
-<img src="./Images/apaisado.jpeg" alt="CRR" width="40%"/>
+<img src="./doc/Images/apaisado.jpeg" alt="CRR" width="40%"/>
 
 ### Objetivos
 Mi Smart Fortwo solo tiene cuentarrevoluciones si lo pagas como un extra, el mío no vino con ese extra y no me apetece pagar más por él así que decidí hacerme uno utilizando el protocolo
@@ -19,16 +19,16 @@ La pantalla utilizada es la típica LCD de 16x2 píxeles y adicionalmente utiliz
 ### Funciones Actuales
 Actualmente el programa puede mostrar:
 - RPM del motor.
-<img src="./Images/rpm_racing.jpeg" alt="RPM" width="40%"/>
+<img src="./doc/Images/rpm_racing.jpeg" alt="RPM" width="40%"/>
 
 - Temperatura del Refrigerante.
-<img src="./Images/temp_rpm.jpeg" alt="Coolant Temp" width="40%"/>
+<img src="./doc/Images/temp_rpm.jpeg" alt="Coolant Temp" width="40%"/>
 
 - Consumo de gasolina (aproximado gracias al sensor MAF).
-<img src="./Images/fuel_rpm.jpeg" alt="Fuel Cons." width="40%"/>
+<img src="./doc/Images/fuel_rpm.jpeg" alt="Fuel Cons." width="40%"/>
 
 - Tiempo de parada para cuidar el turbo.
-<img src="./Images/cool_turbo.jpeg" alt="Turbo Time" width="40%"/>
+<img src="./doc/Images/cool_turbo.jpeg" alt="Turbo Time" width="40%"/>
 
 ### Instalación
 1. Descargar el proyecto
@@ -44,13 +44,13 @@ Actualmente el programa puede mostrar:
 Librería para controlador **ST7066U** hecha por mí. Al ser más específica que la Adafruit funciona a mayor velocidad.
 
 #### Rotary encoder Library
-Le he realizado unos cambios para que funcione con el rotary conectado de GPIO -> GND y he añadido la función de un botón para los rotary con botón.
+Le he realizado unos cambios para que funcione con el rotary conectado de GPIO -> GND, he añadido la función de un botón para los rotary con botón y lo he tratado como variable global.
 
 #### Modelos 3D
-Modelos 3D en formato stl de la caja en carpeta **Modelos**
+Modelos 3D en formato stl de la caja en carpeta **doc/Modelos**
 
 #### Conexiones:
-Cableados a la RPi en carpeta **Images**
+Cableados a la RPi en carpeta **doc/Images**
 
 ### Productos:
 - [Librería OBD original](https://github.com/brendan-w/python-OBD)
@@ -74,6 +74,3 @@ sin necesidad de sacar la Rpi de la caja.
 
 ### TO DO:
 - GUARDADO DE MUESTRAS CADA KM NO CADA SEGUNDO
-- REESCRIBIR TODO EL CÓDIGO EN C++
-- APLICAR PATRONES DE DISEÑO AL CÓDIGO
-- https://github.com/ejvaughan/obdii
