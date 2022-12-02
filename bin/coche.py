@@ -15,8 +15,6 @@ class Coche:
         self.printHub : PrintHub = display
         self.menuList: List[Menu] = menus
 
-    # def print(self, text):
-    #     self.printHub.print(text)
     def mainLoop(self):
         try:
             menu = 0

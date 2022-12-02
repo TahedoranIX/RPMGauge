@@ -6,13 +6,53 @@ package util <<Folder>> {
     interface Observer {
     +update(observable: Observable)
     }
+
     abstract Observable {
     +attach(observer: Observer)
     +detach(observer: Observer)
     +notify()
     }
+    Observable o-right-> Observer
 }
-Observable o-right-> Observer
+
+package interfaces <<Folder>> {
+    class Console {
+    +print(text) - Print by Console
+    }
+
+    class LCDSingle {
+    -lcd : LCD
+    +print(text) - Print by LCD
+    }
+
+    interface PrintHub {
+    +print(text)
+    }
+}
+
+package external_libraries <<Folder>> {
+    class Encoder {
+    Encoder(e1, e2, eb) : Encoder
+    getValue() : int
+    getButtonValue() : bool
+    }
+
+    class LCD {
+    LCD(rs, en, d4, d5, d6, d7) : LCD
+    writeMessage(message : String)
+    clearDisplay()
+    moveCursor(cursor, direction, times)
+    display(display, cursor, blink)
+    home()
+    writeRAM()
+    }
+
+    class OBD {
+    OBD(port, fast, timeout) : OBD
+    query(obd.commands.{}).value.magnitude : String
+    close()
+    }
+}
 
 class Coche {
 -encoder : Encoder
@@ -20,32 +60,16 @@ class Coche {
 -menuList : List<Menu>
 +mainLoop()
 }
-Coche o--> PrintHub
-Coche --> Menu
-Coche --> Encoder
-
-class Console {
-+print(text) - Print by Console
-}
-Console ..|> PrintHub
 
 class Coolant {
 -coolOBD
 +update()
 +print()
 }
-Coolant --|> ECU
 
 interface ECU {
 +print() : String
 +update()
-}
-ECU ..|> Observer
-
-class Encoder {
-Encoder(e1, e2, eb) : Encoder
-getValue() : int
-getButtonValue() : bool
 }
 
 class Gas {
@@ -58,37 +82,10 @@ class Gas {
 +print()
 +update()
 }
-Gas --|> ECU
-Gas --> File
-
-class LCD {
-LCD(rs, en, d4, d5, d6, d7) : LCD
-writeMessage(message : String)
-clearDisplay()
-moveCursor(cursor, direction, times)
-display(display, cursor, blink)
-home()
-writeRAM()
-}
-
-class LCDSingle {
--lcd : LCD
-+print(text) - Print by LCD
-}
-LCDSingle ..|> PrintHub
-LCDSingle --|> LCD
 
 class Menu {
 -ecuList[2] : List<ECU>
 +print() : String[] ECU class
-}
-Menu o--> ECU
-
-class OBD {
-
-OBD(port, fast, timeout) : OBD
-query(obd.commands.{}).value.magnitude : String
-close()
 }
 
 class OBDSingle {
@@ -102,14 +99,6 @@ class OBDSingle {
 -tick()
 +destroy()
 +getCommands()
-
-
-}
-OBDSingle --|> Observable
-OBDSingle --|> OBD
-
-interface PrintHub {
-+print(text)
 }
 
 abstract RPM {
@@ -117,18 +106,15 @@ abstract RPM {
 +update()
 #print()
 }
-RPM --|> ECU
 
 class RPMNumber {
 +print()
 }
-RPMNumber --|> RPM
 
 class RPMGraph {
 -rpmSegments : int
 +print()
 }
-RPMGraph --|> RPM
 
 class File {
 -FILENAME
@@ -144,14 +130,26 @@ class TimeTurbo {
 +print()
 +update()
 }
+
+
+Coche o--> PrintHub
+Coche --> Menu
+Coche --> Encoder
+Coolant --|> ECU
+Console ..|> PrintHub
+ECU ..|> Observer
+LCDSingle ..|> PrintHub
+LCDSingle --|> LCD
+Gas --|> ECU
+Gas --> File
+Menu o--> ECU
+OBDSingle --|> Observable
+OBDSingle --|> OBD
+RPM --|> ECU
+RPMNumber --|> RPM
+RPMGraph --|> RPM
 TimeTurbo --|> ECU
 
-
-
-note "External Library" as Lib
-Lib .. LCD
-Lib .. OBD
-Lib .. Encoder
 
 note "Clase main" as Main
 Main .. Coche

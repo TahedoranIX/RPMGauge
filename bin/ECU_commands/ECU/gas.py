@@ -1,10 +1,11 @@
+from abc import ABC, abstractmethod
 from ECU_commands.ecu import ECU
 from constants import ESTEQUIOMETRICA, DENSIDAD_G, THROTTLE_MINIMUM, WAIT_RESET_GAS, MINIMUM_SPEED
 from fileHandler import fileHandler
 from lib.RotaryLibrary.encoder import Encoder
 
 
-class Gas(ECU):
+class Gas(ECU, ABC):
     def __init__(self):
         super().__init__()
         self.mpg, self.mpgSamples = fileHandler.loadData()
@@ -13,9 +14,8 @@ class Gas(ECU):
         self.stopped = False
         self.savedFile = False
         self.fuelMPGReset = 0
-
+    @abstractmethod
     def update(self, commands):
-        self.resetFuelData()
         allCommands = commands.getCommands()
         self.commands["speed"] = allCommands["speed"]
         self.commands["throttle"] = allCommands["throttle"]
@@ -55,5 +55,7 @@ class Gas(ECU):
             self.mpgSamples = 0
             fileHandler.saveData(self.mpg, self.mpgSamples)
 
+    @abstractmethod
     def print(self):
+        self.resetFuelData()
         return 'Fuel: ' + str(self.instMPG) + ' ' + str(round(self.mpg, 1))
