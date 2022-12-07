@@ -31,14 +31,13 @@ class Gas(ECU):
     def calculateGas(self):
         LPerS = float(self.commands["maf"]) / (
                     ESTEQUIOMETRICA * DENSIDAD_G)  # Pasamos a de g/s de aire a L/s de gasolina
-        self.km += self.commands["speed"] / 3600 * WAIT_TIME
+        self.km += round((self.commands["speed"] / 3600 * WAIT_TIME), 2)
         if not self.stopped:  # Si voy a velocidad mayor que parada, cuenta consumo.
             if self.commands["throttle"] > THROTTLE_MINIMUM:  # Estoy acelerando?
                 self.instMPG = round(LPerS * (360000 / (self.commands["speed"] + 0.0000001)),
                                      1)  # Calculamos L/100km en base a velocidad y L/s
             else:
                 self.instMPG = 0.0
-            print(self.km)
             if self.km >= KM_TO_SAVE_MPG:
                 self.mpg = ((self.mpg * self.mpgSamples + self.instMPG) / (
                             self.mpgSamples + 1))  # Realizamos la media de consumo.
