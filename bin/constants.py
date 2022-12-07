@@ -1,6 +1,7 @@
 MINIMUM_RPM = 1200
 MAXIMUM_RPM = 5500
 WAIT_TIME = 1  # Sleep to read the values from obd and print in lcd.
+KM_TO_SAVE_MPG = 0.1
 WAIT_RESET_GAS = 3  # If wait time = 1 -> 3s.
 WAIT_TURBOTIME = 60
 PORT = "/dev/pts/2"
