@@ -10,11 +10,10 @@ from menu import Menu
 from obdsingle import OBDSingle
 
 encoder = Encoder(20, 16, 21)
-#lcd = LCDSingle(d4=26,d5=19,d6=13,d7=6,en=5,rs=0)
-lcd = LCDSingle(d4=23,d5=18,d6=15,d7=14,en=24,rs=25)
+# lcd = LCDSingle(d4=26,d5=19,d6=13,d7=6,en=5,rs=0)  # Raspberry casa
+lcd = LCDSingle(d4=23, d5=18, d6=15, d7=14, en=24, rs=25)  # Raspberry coche
 console = Console()
 obd = OBDSingle()
-
 
 menu1 = Menu(Coolant(), RPMNumber())
 menu2 = Menu(Gas(), RPMNumber())

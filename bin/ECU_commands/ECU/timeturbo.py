@@ -26,9 +26,3 @@ class TimeTurbo(ECU):
                 return "Time: 00:" + str('{:0>2}'.format(int(time)))
         else:
             return "En marcha"
-
-
-if __name__ == "__main__":
-    time = TimeTurbo()
-    time.update({"speed": 4})
-    print(time.print())

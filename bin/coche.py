@@ -21,7 +21,7 @@ class Coche:
             while True:
                 thread = Thread(target=self.printHub.print(self.menuList[menu].print()))
                 thread.start()
-                # menu = self.encoder.getValue() % len(self.menuList)
+                menu = self.encoder.getValue() % len(self.menuList)
                 thread.join()
         except Exception as e:
             print(e)

@@ -6,6 +6,7 @@ from constants import MAXIMUM_RPM, MINIMUM_RPM
 
 
 class RPM(ECU, ABC):
+    @abstractmethod
     def __init__(self):
         super().__init__()
         self.rpm = 0
