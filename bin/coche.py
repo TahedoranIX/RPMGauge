@@ -6,7 +6,6 @@ from lib.RotaryLibrary.encoder import Encoder
 from Interfaces.printhub import PrintHub
 from threading import Thread
 from menu import Menu
-from obdsingle import OBDSingle
 
 
 class Coche:

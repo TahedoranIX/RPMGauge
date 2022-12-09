@@ -49,7 +49,7 @@ class Gas(ECU):
     def resetFuelData(self):
         if Encoder.getButtonValue():
             self.fuelMPGReset += 1
-        if self.fuelMPGReset == WAIT_RESET_GAS:  # Si el boton del rotatory esta pulsado durante 6*0.5s, se reinician los datos de consumos.
+        if self.fuelMPGReset == WAIT_RESET_GAS * 2:  # Multiplied by 2 caused by lcdsingle.py
             self.fuelMPGReset = 0
             self.mpg = 0
             self.mpgSamples = 0

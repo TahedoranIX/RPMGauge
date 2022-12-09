@@ -19,5 +19,5 @@ class LCDSingle(PrintHub, object):
             cls.lcd.writeMessage(text[0] + '\n' + text[1])
         else:
             cls.lcd.writeMessage(text)
-        time.sleep(WAIT_TIME)
+        time.sleep(WAIT_TIME / 2)
 
