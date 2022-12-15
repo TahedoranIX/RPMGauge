@@ -4,7 +4,7 @@ import time as t
 import obd.obd
 from Observers.observable import Observable
 from Observers.observer import Observer
-from constants import PORT, WAIT_TIME
+from constants import PORT, WAIT_TIME_OBD
 from Interfaces.lcdsingle import LCDSingle
 from lib import obd
 
@@ -88,7 +88,7 @@ class OBDSingle(Observable, object):
         while not cls.exit:
             cls.getParams()
             cls.notify()
-            t.sleep(WAIT_TIME)
+            t.sleep(WAIT_TIME_OBD)
 
     @classmethod
     def destroy(cls):

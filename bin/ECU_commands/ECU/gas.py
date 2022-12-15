@@ -1,6 +1,6 @@
 from ECU_commands.ecu import ECU
 from constants import ESTEQUIOMETRICA, DENSIDAD_G, THROTTLE_MINIMUM, WAIT_RESET_GAS, MINIMUM_SPEED, KM_TO_SAVE_MPG, \
-    WAIT_TIME
+    WAIT_TIME_OBD, WAIT_TIME_PRINTHUB
 from fileHandler import fileHandler
 from lib.RotaryLibrary.encoder import Encoder
 
@@ -15,6 +15,8 @@ class Gas(ECU):
         self.savedFile = False
         self.fuelMPGReset = 0
         self.km = 0
+        self.auxMPG = 0
+        self.auxSample = 0
 
     def update(self, commands):
         allCommands = commands.getCommands()
@@ -31,25 +33,28 @@ class Gas(ECU):
     def calculateGas(self):
         LPerS = float(self.commands["maf"]) / (
                     ESTEQUIOMETRICA * DENSIDAD_G)  # Pasamos a de g/s de aire a L/s de gasolina
-        self.km += round((self.commands["speed"] / 3600 * WAIT_TIME), 2)
+        self.km += round((self.commands["speed"] / 3600 * WAIT_TIME_OBD), 2)
         if not self.stopped:  # Si voy a velocidad mayor que parada, cuenta consumo.
             if self.commands["throttle"] > THROTTLE_MINIMUM:  # Estoy acelerando?
-                self.instMPG = round(LPerS * (360000 / (self.commands["speed"] + 0.0000001)),
-                                     1)  # Calculamos L/100km en base a velocidad y L/s
+                self.instMPG = round(LPerS * (360000 / self.commands["speed"]), 1)  # Calculamos L/100km en base a velocidad y L/s
             else:
                 self.instMPG = 0.0
+            self.auxMPG = ((self.auxMPG * self.auxSample + self.instMPG) / (self.auxSample + 1))
+            self.auxSample += 1
             if self.km >= KM_TO_SAVE_MPG:
-                self.mpg = ((self.mpg * self.mpgSamples + self.instMPG) / (
+                self.mpg = ((self.mpg * self.mpgSamples + self.auxMPG) / (
                             self.mpgSamples + 1))  # Realizamos la media de consumo.
                 self.mpgSamples += 1
                 self.km = 0
+                self.auxMPG = 0
+                self.auxSample = 0
         else:  # Si voy a velocidad menor que parada, consumo infinito.
             self.instMPG = '---'
 
     def resetFuelData(self):
         if Encoder.getButtonValue():
-            self.fuelMPGReset += 1
-        if self.fuelMPGReset == WAIT_RESET_GAS * 2:  # Multiplied by 2 caused by lcdsingle.py
+            self.fuelMPGReset += WAIT_TIME_PRINTHUB
+        if self.fuelMPGReset == WAIT_RESET_GAS:
             self.fuelMPGReset = 0
             self.mpg = 0
             self.mpgSamples = 0

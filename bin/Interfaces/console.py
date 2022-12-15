@@ -2,7 +2,7 @@ import time
 from typing import List
 
 from Interfaces.printhub import PrintHub
-from constants import WAIT_TIME
+from constants import WAIT_TIME_PRINTHUB
 
 
 class Console(PrintHub):
@@ -14,4 +14,4 @@ class Console(PrintHub):
         else:
             print(text)
         print("\n")
-        time.sleep(WAIT_TIME)
+        time.sleep(WAIT_TIME_PRINTHUB)

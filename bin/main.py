@@ -16,7 +16,7 @@ console = Console()
 obd = OBDSingle()
 
 menu1 = Menu(Coolant(), RPMNumber())
-menu2 = Menu(Gas(), RPMNumber())
+menu2 = Menu(RPMGraph(), Gas())
 menu3 = Menu(Coolant(), TimeTurbo())
 
 main = Coche(encoder, lcd, [menu1, menu2, menu3])

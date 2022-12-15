@@ -1,7 +1,7 @@
 import time
 from typing import List
 
-from constants import WAIT_TIME
+from constants import WAIT_TIME_OBD
 from lib.RotaryLibrary.encoder import Encoder
 from Interfaces.printhub import PrintHub
 from threading import Thread
@@ -24,6 +24,6 @@ class Coche:
                 thread.join()
         except Exception as e:
             print(e)
-            time.sleep(WAIT_TIME*5)
+            time.sleep(WAIT_TIME_OBD * 5)
             self.mainLoop()
 
