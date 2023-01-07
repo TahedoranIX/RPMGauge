@@ -21,7 +21,7 @@ class OBDSingle(Observable, object):
         # obd.logger.setLevel(obd.logging.DEBUG)
         cls.printer = printhub
         cls.obd = cls.connection()
-        cls.commands = {}
+        cls.commands = {"dtc": cls.obd.query(obd.commands.GET_DTC)}
         cls.exit = False
         thread = Thread(target=cls.tick)
         thread.start()
@@ -74,7 +74,6 @@ class OBDSingle(Observable, object):
             cls.commands["throttle"] = int(cls.obd.query(obd.commands.THROTTLE_POS).value.magnitude)
             cls.commands["maf"] = str(cls.obd.query(obd.commands.MAF).value.magnitude)
         except Exception as e:
-            print(e)
             cls.commands["speed"] = 0
             cls.commands["rpm"] = 0
             cls.commands["coolant"] = 0
@@ -82,6 +81,17 @@ class OBDSingle(Observable, object):
             cls.commands["maf"] = 0
             cls.notify()
             cls.obd = cls.connection()
+
+    @classmethod
+    def clearCodes(cls):
+        try:
+            cls.obd.query(obd.commands.CLEAR_DTC)
+            if len(cls.obd.query(obd.commands.GET_DTC)):
+                raise Exception('Cleaning error')
+
+        except Exception as e:
+            cls.printer.print("Cleaning error")
+
 
     @classmethod
     def tick(cls):

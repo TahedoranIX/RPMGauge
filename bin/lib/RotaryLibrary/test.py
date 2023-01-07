@@ -17,7 +17,7 @@ try:
     while True:
         time.sleep(2)
         #print(GPIO.input(21))
-        print("Value is {}".format(e1.getValue()))
+        print("Value is {}".format(e1.getRotaryValue()))
 except Exception:
     pass
 

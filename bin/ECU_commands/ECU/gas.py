@@ -51,9 +51,14 @@ class Gas(ECU):
         else:  # Si voy a velocidad menor que parada, consumo infinito.
             self.instMPG = '---'
 
-    def resetFuelData(self):
+    def checkButton(self):
         if Encoder.getButtonValue():
             self.fuelMPGReset += WAIT_TIME_PRINTHUB
+        else:
+            self.fuelMPGReset = 0
+
+    def resetFuelData(self):
+        self.checkButton()
         if self.fuelMPGReset == WAIT_RESET_GAS:
             self.fuelMPGReset = 0
             self.mpg = 0

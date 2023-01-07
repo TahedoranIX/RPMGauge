@@ -58,7 +58,7 @@ class Smart:
         self.__encoder = Encoder(e1, e2, eb)  # ./RotaryLibrary/encoder.py
 
         if self.__debug:
-            print("rotatorio: ", self.__encoder.getValue())
+            print("rotatorio: ", self.__encoder.getRotaryValue())
 
         # TURBOCARE
         self.__stopped = False  # Comprueba si coche parado.
@@ -180,7 +180,7 @@ class Smart:
         Returns:
             Menu number
         """
-        valor = self.__encoder.getValue()
+        valor = self.__encoder.getRotaryValue()
         if valor > (menu - 1):
             self.__encoder.value = 0
             valor = 0
@@ -347,7 +347,7 @@ class Smart:
         setDisplay = False
         cantidadLitros1 = 0  # Cantidad de litros numero entero
         cantidadLitros2 = 0  # Cantidad de litros decimales.
-        backupRotary = self.__encoder.getValue()
+        backupRotary = self.__encoder.getRotaryValue()
         decimal = False
         self.__encoder.value = 0
         while not setDisplay:
@@ -356,9 +356,9 @@ class Smart:
             self.__lcd.writeMessage('\n' + str(cantidadLitros1) + '.' + str(cantidadLitros2))
             t.sleep(0.5)
             if not decimal:
-                cantidadLitros1 = self.__encoder.getValue()
+                cantidadLitros1 = self.__encoder.getRotaryValue()
             else:
-                cantidadLitros2 = self.__encoder.getValue()
+                cantidadLitros2 = self.__encoder.getRotaryValue()
 
             if self.getButtonRotatory():
                 self.__encoder.value = 0

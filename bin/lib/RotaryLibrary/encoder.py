@@ -70,7 +70,7 @@ class Encoder:
 
         self.state = newState
 
-    def getValue(self):
+    def getRotaryValue(self):
         return self.value
 
     @classmethod
