@@ -5,7 +5,7 @@ from ECU_commands.ecu import ECU
 from Observers.observable import Observable
 
 
-class Coolant(ECU):
+class DtcScreen(ECU):
     def __init__(self) -> None:
         super().__init__()
         self.dtcCodes = OBDSingle.commands["dtc"]
@@ -13,26 +13,36 @@ class Coolant(ECU):
         self.clearCounter = 0
 
     def update(self, commands: Observable):
-        self.checkButton()
-        self.cleanCodes()
+        if len(self.dtcCodes):
+            self.checkMenuCode()
+            self.cleanCodes()
 
-    def checkButton(self):
+    def checkMenuCode(self):
         if Encoder.getButtonValue():
             self.actualCode += 1
             self.actualCode = self.actualCode % len(self.dtcCodes)
 
-    def cleanCodes(self):
+    def checkCleanButton(self):
         if Encoder.getButtonValue():
             self.clearCounter += WAIT_TIME_PRINTHUB
-        if self.clearCounter == WAIT_RESET_GAS:
+        else:
+            self.clearCounter = 0
+
+    def cleanCodes(self):
+        self.checkCleanButton()
+        if self.clearCounter >= WAIT_RESET_GAS:
             self.clearCounter = 0
             OBDSingle.clearCodes()
+            self.dtcCodes = OBDSingle.commands["dtc"]
 
     def checkDtc(self):
-        code = self.dtcCodes[self.actualCode][1]
-        if code == "":
-            return "Vehicle-specific code"
-        return code
+        if len(self.dtcCodes):
+            code = self.dtcCodes[self.actualCode][1]
+            if code == "":
+                return "Vehicle-specific code"
+            return code
+        else:
+            return "No ML codes"
 
     def print(self):
         return self.checkDtc()

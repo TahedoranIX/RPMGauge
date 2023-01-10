@@ -1,12 +1,10 @@
-from typing import List
-
-from ECU_commands.ecu import ECU
-
 
 class Menu:
-    def __init__(self, ecu1, ecu2):
-        self.ecuList : List[ECU] = [ecu1, ecu2]
+    def __init__(self, ecu1, ecu2=None):
+        self.ecuList = [ecu1, ecu2]
 
     def print(self):
+        if self.ecuList[1] is None:
+            return [self.ecuList[0].print()]
         return [self.ecuList[0].print(), self.ecuList[1].print()]
 

@@ -21,7 +21,7 @@ class OBDSingle(Observable, object):
         # obd.logger.setLevel(obd.logging.DEBUG)
         cls.printer = printhub
         cls.obd = cls.connection()
-        cls.commands = {"dtc": cls.obd.query(obd.commands.GET_DTC)}
+        cls.commands = {"dtc": cls.obd.query(obd.commands.GET_DTC).value}
         cls.exit = False
         thread = Thread(target=cls.tick)
         thread.start()
@@ -86,7 +86,8 @@ class OBDSingle(Observable, object):
     def clearCodes(cls):
         try:
             cls.obd.query(obd.commands.CLEAR_DTC)
-            if len(cls.obd.query(obd.commands.GET_DTC)):
+            cls.commands["dtc"] = cls.obd.query(obd.commands.GET_DTC).value
+            if len(cls.commands["dtc"]):
                 raise Exception('Cleaning error')
 
         except Exception as e:

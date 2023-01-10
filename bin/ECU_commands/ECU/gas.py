@@ -59,7 +59,7 @@ class Gas(ECU):
 
     def resetFuelData(self):
         self.checkButton()
-        if self.fuelMPGReset == WAIT_RESET_GAS:
+        if self.fuelMPGReset >= WAIT_RESET_GAS:
             self.fuelMPGReset = 0
             self.mpg = 0
             self.mpgSamples = 0
