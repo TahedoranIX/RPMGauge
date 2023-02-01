@@ -1,4 +1,4 @@
-from constants import WAIT_TIME_PRINTHUB, WAIT_RESET_GAS
+from constants import TICK_CLEAN_CODES, WAIT_CLEAN_CODES
 from lib.RotaryLibrary.encoder import Encoder
 from obdsingle import OBDSingle
 from ECU_commands.ecu import ECU
@@ -13,36 +13,37 @@ class DtcScreen(ECU):
         self.clearCounter = 0
 
     def update(self, commands: Observable):
-        if len(self.dtcCodes):
-            self.checkMenuCode()
-            self.cleanCodes()
+        pass
 
-    def checkMenuCode(self):
+    def navigateInCodes(self):
         if Encoder.getButtonValue():
             self.actualCode += 1
             self.actualCode = self.actualCode % len(self.dtcCodes)
 
     def checkCleanButton(self):
         if Encoder.getButtonValue():
-            self.clearCounter += WAIT_TIME_PRINTHUB
+            self.clearCounter += TICK_CLEAN_CODES
         else:
             self.clearCounter = 0
 
     def cleanCodes(self):
         self.checkCleanButton()
-        if self.clearCounter >= WAIT_RESET_GAS:
+        if self.clearCounter >= WAIT_CLEAN_CODES:
             self.clearCounter = 0
             OBDSingle.clearCodes()
             self.dtcCodes = OBDSingle.commands["dtc"]
 
     def checkDtc(self):
+        actualCode = "No ML codes"
         if len(self.dtcCodes):
+            self.navigateInCodes()
+            self.cleanCodes()
             code = self.dtcCodes[self.actualCode][1]
-            if code == "":
-                return "Vehicle-specific code"
-            return code
-        else:
-            return "No ML codes"
+            if code == "":  # Library doesn't know how to describe this code.
+                actualCode = "Vehicle-specific code"
+            else:
+                actualCode = code
+        return str(actualCode)
 
     def print(self):
         return self.checkDtc()

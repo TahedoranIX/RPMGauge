@@ -8,7 +8,7 @@ class Coolant(ECU):
 		self.coolOBD = 0
 
 	def update(self, commands: Observable):
-		self.coolOBD = commands.getCommands()["coolant"]
+		self.coolOBD = commands["coolant"]
 
 	def print(self):
 		return 'Temp: ' + str(self.coolOBD) + ' C'

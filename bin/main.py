@@ -1,10 +1,10 @@
 from ECU_commands.ECU.coolant import Coolant
-from ECU_commands.ECU.errorScreen import DtcScreen
+from ECU_commands.ECU.dtc import DtcScreen
 from ECU_commands.ECU.gas import Gas
 from ECU_commands.ECU.rpm import RPMNumber, RPMGraph
 from ECU_commands.ECU.timeturbo import TimeTurbo
 from ECU_commands.ecu import ECU
-from coche import Coche
+from car import Car
 from Interfaces.console import Console
 from Interfaces.lcdsingle import LCDSingle
 from lib.RotaryLibrary.encoder import Encoder
@@ -20,10 +20,10 @@ lcd = LCDSingle(d4=26,d5=19,d6=13,d7=6,en=5,rs=0)  # Raspberry casa
 console = Console()
 obd = OBDSingle()
 
-menu1 = Menu(Coolant(), RPMNumber())
+menu1 = Menu(DtcScreen(), TimeTurbo())
 menu2 = Menu(RPMGraph(), Gas())
 menu3 = Menu(Coolant(), TimeTurbo())
 menu4 = Menu(DtcScreen())
 
-main = Coche(encoder, lcd, [menu1, menu2, menu3, menu4])
+main = Car(encoder, console, [menu1, menu2, menu3, menu4])
 main.mainLoop()

@@ -2,7 +2,7 @@ import time
 from typing import List
 
 from Interfaces.printhub import PrintHub
-from constants import WAIT_TIME_PRINTHUB
+from constants import WAIT_REFRESH_PRINTHUB
 from lib.LCDLibrary.lcdLibrary import LCD
 
 
@@ -19,5 +19,5 @@ class LCDSingle(PrintHub, object):
             cls.lcd.writeMessage(text[0] + '\n' + text[1])
         else:
             cls.lcd.writeMessage(text)
-        time.sleep(WAIT_TIME_PRINTHUB)
+        time.sleep(WAIT_REFRESH_PRINTHUB)
 

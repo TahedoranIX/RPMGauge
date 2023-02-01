@@ -1,14 +1,13 @@
 import time
 from typing import List
 
-from constants import WAIT_TIME_OBD
+from constants import WAIT_REFRESH_OBD
 from lib.RotaryLibrary.encoder import Encoder
 from Interfaces.printhub import PrintHub
-from threading import Thread
 from menu import Menu
 
 
-class Coche:
+class Car:
     def __init__(self, encoder, display, menus):
         self.encoder : Encoder = encoder
         self.printHub : PrintHub = display
@@ -18,12 +17,10 @@ class Coche:
         try:
             menu = 0
             while True:
-                thread = Thread(target=self.printHub.print(self.menuList[menu].print()))
-                thread.start()
+                self.printHub.print(self.menuList[menu].print())
                 menu = self.encoder.getRotaryValue() % len(self.menuList)
-                thread.join()
         except Exception as e:
             print(e)
-            time.sleep(WAIT_TIME_OBD * 5)
+            time.sleep(WAIT_REFRESH_OBD * 5)
             self.mainLoop()
 

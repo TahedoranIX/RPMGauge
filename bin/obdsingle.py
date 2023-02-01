@@ -1,12 +1,11 @@
 from threading import Thread
 from typing import List
 import time as t
-import obd.obd
 from Observers.observable import Observable
 from Observers.observer import Observer
-from constants import PORT, WAIT_TIME_OBD
+from constants import PORT, WAIT_REFRESH_OBD
 from Interfaces.lcdsingle import LCDSingle
-from lib import obd
+from lib.obd import obd
 
 
 class OBDSingle(Observable, object):
@@ -63,7 +62,7 @@ class OBDSingle(Observable, object):
     @classmethod
     def notify(cls) -> None:
         for observer in cls.observers:
-            observer.update(OBDSingle)
+            observer.update(OBDSingle.commands)
 
     @classmethod
     def getParams(cls):
@@ -99,7 +98,7 @@ class OBDSingle(Observable, object):
         while not cls.exit:
             cls.getParams()
             cls.notify()
-            t.sleep(WAIT_TIME_OBD)
+            t.sleep(WAIT_REFRESH_OBD)
 
     @classmethod
     def destroy(cls):

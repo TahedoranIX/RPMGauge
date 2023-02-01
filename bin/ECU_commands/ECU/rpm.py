@@ -16,8 +16,7 @@ class RPM(ECU, ABC):
         pass
 
     def update(self, commands: Observable):
-        command = commands.getCommands()
-        self.rpm = command["rpm"]
+        self.rpm = commands["rpm"]
 
 
 class RPMNumber(RPM):
@@ -27,15 +26,16 @@ class RPMNumber(RPM):
     def print(self):
         return 'RPM: ' + str(self.rpm)
 
+
 class RPMGraph(RPM):
     def __init__(self):
         super().__init__()
         self.rpmSegments = int((MAXIMUM_RPM - MINIMUM_RPM) / 16)
 
     def print(self):
-        segment = int((float(self.rpm) - MINIMUM_RPM) / self.rpmSegments)
-        segmentList = ""
-        while segment > 0:
-            segmentList = segmentList + 'ÿ'
-            segment = segment - 1
-        return segmentList
+        segments = int((float(self.rpm) - MINIMUM_RPM) / self.rpmSegments)
+        segmentString = ""
+        while segments > 0:
+            segmentString = segmentString + 'ÿ'
+            segments = segments - 1
+        return segmentString

@@ -6,5 +6,6 @@ class Menu:
     def print(self):
         if self.ecuList[1] is None:
             return self.ecuList[0].print()
-        return [self.ecuList[0].print(), self.ecuList[1].print()]
+        else:
+            return [self.ecuList[0].print(), self.ecuList[1].print()]
 
