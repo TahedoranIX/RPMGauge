@@ -22,7 +22,7 @@ class Gas(ECU):
         self.commands["speed"] = commands["speed"]
         self.commands["throttle"] = commands["throttle"]
         self.commands["maf"] = commands["maf"]
-        if self.commands["speed"] < MINIMUM_SPEED and not self.stopped:
+        if self.commands["speed"] <= MINIMUM_SPEED and not self.stopped:
             self.stopped = True
             fileHandler.saveData(self.mpg, self.mpgSamples)
         elif self.commands["speed"] > MINIMUM_SPEED and self.stopped:
@@ -35,7 +35,7 @@ class Gas(ECU):
         self.kmTraveled += round((self.commands["speed"] / 3600 * WAIT_REFRESH_OBD), 2)
         if not self.stopped:
             if self.commands["throttle"] > THROTTLE_MINIMUM:
-                self.instMpg = round(LPerS * (360000 / self.commands["speed"]), 1)  # From L/s to L/100km
+                self.instMpg = round(LPerS / (self.kmTraveled / 100), 1)  # From L/s to L/100km
             else:
                 self.instMpg = 0.0
             self.unsavedMpg = ((self.unsavedMpg * self.unsavedSamples + self.instMpg) / (self.unsavedSamples + 1))
