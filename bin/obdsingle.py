@@ -71,7 +71,7 @@ class OBDSingle(Observable, object):
             cls.commands["rpm"] = str(cls.obd.query(obd.commands.RPM).value.magnitude)
             cls.commands["coolant"] = str(cls.obd.query(obd.commands.COOLANT_TEMP).value.magnitude)
             cls.commands["throttle"] = int(cls.obd.query(obd.commands.THROTTLE_POS).value.magnitude)
-            cls.commands["maf"] = str(cls.obd.query(obd.commands.MAF).value.magnitude)
+            cls.commands["maf"] = float(cls.obd.query(obd.commands.MAF).value.magnitude)
         except Exception as e:
             cls.commands["speed"] = 0
             cls.commands["rpm"] = 0
