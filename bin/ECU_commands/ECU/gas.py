@@ -30,12 +30,12 @@ class Gas(ECU):
         self.calculateGas()
 
     def calculateGas(self):
-        LPerS = float(self.commands["maf"]) / (
+        literPerSeconds = self.commands["maf"] / (
                 GASOLINE_STOICHIOMETRIC * GASOLINE_DENSITY)  # g/s of air to L/s of gas.
-        self.kmTraveled += round((self.commands["speed"] / 3600 * WAIT_REFRESH_OBD), 2)
+        self.kmTraveled += round((self.commands["speed"] / 3600.0 * WAIT_REFRESH_OBD), 2)
         if not self.stopped:
             if self.commands["throttle"] > THROTTLE_MINIMUM:
-                self.instMpg = round(LPerS / (self.kmTraveled / 100), 1)  # From L/s to L/100km
+                self.instMpg = round(literPerSeconds * 360000.0 / self.commands["speed"], 1)  # From L/s to L/100km
             else:
                 self.instMpg = 0.0
             self.unsavedMpg = ((self.unsavedMpg * self.unsavedSamples + self.instMpg) / (self.unsavedSamples + 1))
