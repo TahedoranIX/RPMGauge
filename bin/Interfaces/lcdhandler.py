@@ -6,7 +6,7 @@ from constants import WAIT_REFRESH_PRINTHUB
 from lib.LCDLibrary.lcdLibrary import LCD
 
 
-class LCDSingle(PrintHub, object):
+class LCDHandler(PrintHub, object):
     lcd = None
     @classmethod
     def __init__(cls, d4=None, d5=None, d6=None, d7=None, en=None, rs=None):

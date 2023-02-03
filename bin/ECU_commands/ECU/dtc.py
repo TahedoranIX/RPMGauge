@@ -1,6 +1,6 @@
 from constants import TICK_CLEAN_CODES, WAIT_CLEAN_CODES
 from lib.RotaryLibrary.encoder import Encoder
-from obdsingle import OBDSingle
+from Interfaces.obdhandler import OBDHandler
 from ECU_commands.ecu import ECU
 from Observers.observable import Observable
 
@@ -8,7 +8,7 @@ from Observers.observable import Observable
 class DtcScreen(ECU):
     def __init__(self) -> None:
         super().__init__()
-        self.dtcCodes = OBDSingle.commands["dtc"]
+        self.dtcCodes = OBDHandler.commands["dtc"]
         self.actualCode = 0  # Actual code we're looking in.
         self.clearCounter = 0
 
@@ -30,8 +30,8 @@ class DtcScreen(ECU):
         self.checkCleanButton()
         if self.clearCounter >= WAIT_CLEAN_CODES:
             self.clearCounter = 0
-            OBDSingle.clearCodes()
-            self.dtcCodes = OBDSingle.commands["dtc"]
+            OBDHandler.clearCodes()
+            self.dtcCodes = OBDHandler.commands["dtc"]
 
     def checkDtc(self):
         actualCode = "No ML codes"

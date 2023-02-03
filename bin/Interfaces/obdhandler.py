@@ -4,11 +4,11 @@ import time as t
 from Observers.observable import Observable
 from Observers.observer import Observer
 from constants import PORT, WAIT_REFRESH_OBD
-from Interfaces.lcdsingle import LCDSingle
+from Interfaces.lcdhandler import LCDHandler
 from lib.obd import obd
 
 
-class OBDSingle(Observable, object):
+class OBDHandler(Observable, object):
     observers: List[Observer] = []
     printer = None
     obd = None
@@ -16,7 +16,7 @@ class OBDSingle(Observable, object):
     exit = False
 
     @classmethod
-    def __init__(cls, printhub=LCDSingle) -> None:
+    def __init__(cls, printhub=LCDHandler) -> None:
         # obd.logger.setLevel(obd.logging.DEBUG)
         cls.printer = printhub
         cls.obd = cls.connection()
@@ -62,7 +62,7 @@ class OBDSingle(Observable, object):
     @classmethod
     def notify(cls) -> None:
         for observer in cls.observers:
-            observer.update(OBDSingle.commands)
+            observer.update(OBDHandler.commands)
 
     @classmethod
     def getParams(cls):
