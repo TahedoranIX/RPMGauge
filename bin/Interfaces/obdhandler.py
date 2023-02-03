@@ -17,7 +17,7 @@ class OBDHandler(Observable, object):
 
     @classmethod
     def __init__(cls, printhub=LCDHandler) -> None:
-        # obd.logger.setLevel(obd.logging.DEBUG)
+        #obd.logger.setLevel(obd.logging.DEBUG)
         cls.printer = printhub
         cls.obd = cls.connection()
         cls.commands = {"dtc": cls.obd.query(obd.commands.GET_DTC).value}

@@ -7,7 +7,6 @@ GPIO.setwarnings(False)
 
 class LCD:
 
-
     def __init__(self, d4, d5, d6, d7, en, rs):
         """Pin set and LCD init"""
 
