@@ -3,7 +3,7 @@ from typing import List
 
 from Interfaces.printhub import PrintHub
 from constants import WAIT_REFRESH_PRINTHUB
-from lib.LCDLibrary.lcdLibrary import LCD
+from lib.LCDLibrary.lcd import LCD
 
 
 class LCDHandler(PrintHub, object):

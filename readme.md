@@ -30,9 +30,15 @@ Actualmente el programa puede mostrar:
 - Tiempo de parada para cuidar el turbo.
 <img src="./doc/Images/cool_turbo.jpeg" alt="Turbo Time" width="40%"/>
 
+### Dependencies
+In order to make RPMGauge, it needs PYTHON-OBD, and my LCDLibrary.
+```Shell
+$ pip install obd
+```
+
 ### Instalación
 1. Descargar el proyecto
-2. introducir *pip install obd* en nuestro entorno.
+2. Use pip install obd en nuestro entorno.
 3. Editar main.py para asignar puertos, entre otros parámetros.
 4. Ejecutar main.py: python3 main.py
 

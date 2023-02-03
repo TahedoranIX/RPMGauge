@@ -1,7 +1,7 @@
 from ECU_commands.ECU.coolant import Coolant
 from ECU_commands.ECU.dtc import DtcScreen
 from ECU_commands.ECU.gas import Gas
-from ECU_commands.ECU.rpm import RPMGraph
+from ECU_commands.ECU.rpm import RPMGraph, RPMNumber
 from ECU_commands.ECU.timeturbo import TimeTurbo
 from car import Car
 from Interfaces.console import Console
@@ -19,7 +19,7 @@ lcd = LCDHandler(d4=26, d5=19, d6=13, d7=6, en=5, rs=0)  # Raspberry casa
 console = Console()
 obd = OBDHandler()
 
-menu1 = Menu(DtcScreen(), TimeTurbo())
+menu1 = Menu(RPMNumber(), TimeTurbo())
 menu2 = Menu(RPMGraph(), Gas())
 menu3 = Menu(Coolant(), TimeTurbo())
 menu4 = Menu(DtcScreen())

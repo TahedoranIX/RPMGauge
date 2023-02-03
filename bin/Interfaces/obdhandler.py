@@ -5,7 +5,7 @@ from Observers.observable import Observable
 from Observers.observer import Observer
 from constants import PORT, WAIT_REFRESH_OBD
 from Interfaces.lcdhandler import LCDHandler
-from lib.obd import obd
+from obd import obd
 
 
 class OBDHandler(Observable, object):
