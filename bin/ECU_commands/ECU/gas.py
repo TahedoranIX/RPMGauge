@@ -9,17 +9,16 @@ from lib.RotaryLibrary.encoder import Encoder
 class Gas(ECU):
     def __init__(self):
         super().__init__()
-        if 'MAF' and 'THROTTLE_POS' and 'SPEED' in OBDHandler.commands:
-            OBDHandler.attach(self)
-
-        self.mpg, self.mpgSamples = fileHandler.loadData()
+        self.litersConsumed, self.kmTraveled = fileHandler.loadData()
+        self.mpg = round(self.litersConsumed * 100.0 / (self.kmTraveled + 0.0000000001), 1)
+        self.kmToSave = 0
         self.instMpg = 0
         self.commands = {}
         self.stopped = False
         self.savedFile = False
         self.resetCounter = 0
-        self.kmTraveled = 0
-        self.litersConsumed = 0
+        if 'MAF' and 'THROTTLE_POS' and 'SPEED' in OBDHandler.commands:
+            OBDHandler.attach(self)
 
     def update(self, commands):
         self.commands["speed"] = commands["SPEED"]
@@ -27,7 +26,7 @@ class Gas(ECU):
         self.commands["maf"] = commands["MAF"]
         if self.commands["speed"] <= MINIMUM_SPEED and not self.stopped:
             self.stopped = True
-            fileHandler.saveData(self.mpg, self.mpgSamples)
+            fileHandler.saveData(self.litersConsumed, self.kmTraveled)
         elif self.commands["speed"] > MINIMUM_SPEED and self.stopped:
             self.stopped = False
         self.calculateGas()
@@ -39,17 +38,17 @@ class Gas(ECU):
     def calculateGas(self):
         liters = self.mafConversion()
         self.litersConsumed += liters * WAIT_REFRESH_OBD
+        self.kmToSave += self.commands["speed"] / 3600.0 * WAIT_REFRESH_OBD
         self.kmTraveled += self.commands["speed"] / 3600.0 * WAIT_REFRESH_OBD
         if not self.stopped:
             if self.commands["throttle"] > THROTTLE_MINIMUM:
                 self.instMpg = round(liters * 360000.0 / self.commands["speed"], 1)  # From L/s to L/100km
             else:
                 self.instMpg = 0.0
-            if self.kmTraveled >= KM_TO_SAVE_MPG:
-                self.mpg = (self.mpg * self.mpgSamples + (self.litersConsumed * 100.0 / self.kmTraveled)) / (self.mpgSamples + 1)
-                self.mpgSamples += 1
-                self.kmTraveled = 0
-                self.litersConsumed = 0
+            if self.kmToSave >= KM_TO_SAVE_MPG:
+                self.mpg = round(self.litersConsumed * 100.0 / self.kmTraveled, 1)  # L/100km
+                self.kmToSave = 0
+
         else:  # If stopped, infinite consumption
             self.instMpg = '---'
 
@@ -63,10 +62,10 @@ class Gas(ECU):
         self.checkButton()
         if self.resetCounter >= WAIT_RESET_GAS:
             self.resetCounter = 0
-            self.mpg = 0
-            self.mpgSamples = 0
-            fileHandler.saveData(self.mpg, self.mpgSamples)
+            self.litersConsumed = 0
+            self.kmTraveled = 0
+            fileHandler.saveData(self.litersConsumed, self.kmTraveled)
 
     def print(self):
         self.resetFuelData()
-        return 'Fuel: ' + str(self.instMpg) + ' ' + str(round(self.mpg, 1))
+        return 'Fuel: ' + str(self.instMpg) + ' ' + str(self.mpg)
