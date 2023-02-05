@@ -6,8 +6,9 @@ from constants import THROTTLE_MINIMUM, WAIT_RESET_GAS, MINIMUM_SPEED, KM_TO_SAV
 from fileHandler import fileHandler
 from lib.RotaryLibrary.encoder import Encoder
 
-#TODO: PONER EL CONSUMO MEDIO EN BASE A LOS KM RECORRIDOS Y LA MEDIA DE COMBUSTIBLE EN ESE PERIODO
-#https://stackoverflow.com/questions/17170646/what-is-the-best-way-to-get-fuel-consumption-mpg-using-obd2-parameters
+
+# TODO: PONER EL CONSUMO MEDIO EN BASE A LOS KM RECORRIDOS Y LA MEDIA DE COMBUSTIBLE EN ESE PERIODO
+# https://stackoverflow.com/questions/17170646/what-is-the-best-way-to-get-fuel-consumption-mpg-using-obd2-parameters
 class Gas(ECU):
     def __init__(self):
         super().__init__()
@@ -21,8 +22,7 @@ class Gas(ECU):
         self.savedFile = False
         self.resetCounter = 0
         self.kmTraveled = 0
-        self.unsavedMpg = 0
-        self.unsavedSamples = 0
+        self.litersConsumed = 0
 
     def update(self, commands):
         self.commands["speed"] = commands["SPEED"]
@@ -35,28 +35,25 @@ class Gas(ECU):
             self.stopped = False
         self.calculateGas()
 
-    def literPerSeconds(self):
-        return self.commands["maf"] / (
-                Car.stoichiometric * Car.density)  # g/s of air to L/s of gas.
+    def mafConversion(self):
+        return float((self.commands["maf"] / (
+                Car.stoichiometric * Car.density)))  # g/s of air to L/s of gas.
 
     def calculateGas(self):
-        literPerSeconds = self.literPerSeconds()
-        self.kmTraveled += round((self.commands["speed"] / 3600.0 * WAIT_REFRESH_OBD), 2)
+        liters = self.mafConversion()
+        self.litersConsumed += liters * WAIT_REFRESH_OBD
+        self.kmTraveled += self.commands["speed"] / 3600.0 * WAIT_REFRESH_OBD
         if not self.stopped:
             if self.commands["throttle"] > THROTTLE_MINIMUM:
-                self.instMpg = round(literPerSeconds * 360000.0 / self.commands["speed"], 1)  # From L/s to L/100km
+                self.instMpg = round(liters * 360000.0 / self.commands["speed"], 1)  # From L/s to L/100km
             else:
                 self.instMpg = 0.0
-            self.unsavedMpg = ((self.unsavedMpg * self.unsavedSamples + self.instMpg) / (self.unsavedSamples + 1))
-            self.unsavedSamples += 1
             if self.kmTraveled >= KM_TO_SAVE_MPG:
-                self.mpg = ((self.mpg * self.mpgSamples + self.unsavedMpg) / (
-                            self.mpgSamples + 1))
+                self.mpg = (self.mpg * self.mpgSamples + (self.litersConsumed * 100.0 / self.kmTraveled)) / (self.mpgSamples + 1)
                 self.mpgSamples += 1
                 self.kmTraveled = 0
-                self.unsavedMpg = 0
-                self.unsavedSamples = 0
-        else: # If stopped, infinite consumption
+                self.litersConsumed = 0
+        else:  # If stopped, infinite consumption
             self.instMpg = '---'
 
     def checkButton(self):
