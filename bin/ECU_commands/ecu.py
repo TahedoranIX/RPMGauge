@@ -5,9 +5,6 @@ from Observers.observer import Observer
 
 
 class ECU(Observer, ABC):
-	def __init__(self) -> None:
-		pass
-
 	@abstractmethod
 	def update(self, commands: Observable):
 		pass

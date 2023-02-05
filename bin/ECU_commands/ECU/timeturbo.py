@@ -6,7 +6,6 @@ from constants import WAIT_TURBOTIME, MINIMUM_SPEED
 
 class TimeTurbo(ECU):
     def __init__(self):
-        super().__init__()
         self.finalTime = 0
         self.stopped = False
         if 'SPEED' in OBDHandler.commands:

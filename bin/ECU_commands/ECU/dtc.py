@@ -6,7 +6,6 @@ from ECU_commands.ecu import ECU
 
 class DtcScreen(ECU):
     def __init__(self) -> None:
-        super().__init__()
         self.dtcCodes = []
         self.dtcCodes = OBDHandler.commands["GET_DTC"]
         self.actualCode = 0  # Actual code we're looking in.

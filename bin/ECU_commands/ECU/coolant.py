@@ -4,7 +4,6 @@ from Interfaces.obdhandler import OBDHandler
 
 class Coolant(ECU):
     def __init__(self) -> None:
-        super().__init__()
         self.coolOBD = -99
         if 'COOLANT_TEMP' in OBDHandler.commands:
             OBDHandler.attach(self)

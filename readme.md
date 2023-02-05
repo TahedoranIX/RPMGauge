@@ -1,14 +1,18 @@
-# CuentaRevoluciones
+# Head-Up display
 Cuentarrevoluciones hecho con RPi zero W con pantalla lcd 16x2 y rotary-encoder. Funciona mediante OBDII.
-
+Head-Up display based on OBDII for RPi zero W actually compatible with LCD screen 1602A and a rotary encoder.
 <img src="./doc/Images/apaisado.jpeg" alt="CRR" width="40%"/>
 
-### Objetivos
+### Motivations
 Mi Smart Fortwo solo tiene cuentarrevoluciones si lo pagas como un extra, el mío no vino con ese extra y no me apetece pagar más por él así que decidí hacerme uno utilizando el protocolo
  OBD-II.
+My Smart ForTwo only have a revcounter if you pay it as an extra, mine didn't come with that extra and I don't want to pay it, so I decided to create one myself taking advantage of the 
+OBD-II protocol.
+
 La idea inicial es solo mostrar las revoluciones del motor pero como veréis, he implementado más cosas.
+The initial idea was to only get the rpm of the car, but as you will see, I implemented much more things.
  
-### Qué es? Cómo funciona?
+### What? How does it work
 
 Todo el programa esta escrito en Python3 y ejecutado en una RaspberryPi Zero W (versión con WiFi y Bluetooth).
 
@@ -31,16 +35,21 @@ Actualmente el programa puede mostrar:
 <img src="./doc/Images/cool_turbo.jpeg" alt="Turbo Time" width="40%"/>
 
 ### Dependencies
-In order to make RPMGauge, it needs PYTHON-OBD, and my LCDLibrary.
+In order to make RPMGauge, it needs PYTHON-OBD, a rotary-encoder library and my LCDLibrary; these last two are already 
+implemented in the project.
+But the PYTHON-OBD you will need to install it:
 ```Shell
 $ pip install obd
 ```
 
-### Instalación
-1. Descargar el proyecto
-2. Use pip install obd en nuestro entorno.
-3. Editar main.py para asignar puertos, entre otros parámetros.
-4. Ejecutar main.py: python3 main.py
+### Installation
+1. Download the zip
+2. Edit constants.py to assign bluetooth obd ports and savefile root for the MPG.
+3. Edit main.py to edit the pins of the LCD and the rotary.
+4. Execute main.py
+```Shell
+$ python3 main.py
+```
 
 ## Información Adicional
 
@@ -50,7 +59,8 @@ $ pip install obd
 Librería para controlador **ST7066U** hecha por mí. Al ser más específica que la Adafruit funciona a mayor velocidad.
 
 #### Rotary encoder Library
-Le he realizado unos cambios para que funcione con el rotary conectado de GPIO -> GND, he añadido la función de un botón para los rotary con botón y lo he tratado como variable global.
+Le he realizado unos cambios para que funcione con el rotary conectado de GPIO -> GND, 
+he añadido la función de un botón para los rotary con botón y lo he tratado como variable global.
 
 #### Modelos 3D
 Modelos 3D en formato stl de la caja en carpeta **doc/Modelos**
@@ -79,4 +89,3 @@ sin necesidad de sacar la Rpi de la caja.
 - [raspberry](https://www.raspberrypi.com/documentation/computers/configuration.html#setting-up-a-routed-wireless-access-point)
 
 ### TO DO:
-- GUARDADO DE MUESTRAS CADA KM NO CADA SEGUNDO

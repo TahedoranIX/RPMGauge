@@ -8,7 +8,6 @@ from lib.RotaryLibrary.encoder import Encoder
 
 class Gas(ECU):
     def __init__(self):
-        super().__init__()
         self.litersConsumed, self.kmTraveled = fileHandler.loadData()
         self.mpg = round(self.litersConsumed * 100.0 / (self.kmTraveled + 0.0000000001), 1)
         self.kmToSave = 0
