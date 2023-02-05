@@ -6,9 +6,6 @@ from constants import THROTTLE_MINIMUM, WAIT_RESET_GAS, MINIMUM_SPEED, KM_TO_SAV
 from fileHandler import fileHandler
 from lib.RotaryLibrary.encoder import Encoder
 
-
-# TODO: PONER EL CONSUMO MEDIO EN BASE A LOS KM RECORRIDOS Y LA MEDIA DE COMBUSTIBLE EN ESE PERIODO
-# https://stackoverflow.com/questions/17170646/what-is-the-best-way-to-get-fuel-consumption-mpg-using-obd2-parameters
 class Gas(ECU):
     def __init__(self):
         super().__init__()
