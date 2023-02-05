@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 from ECU_commands.ecu import ECU
-from Observers.observable import Observable
+from Interfaces.obdhandler import OBDHandler
 from constants import MAXIMUM_RPM, MINIMUM_RPM
 
 
@@ -10,13 +10,17 @@ class RPM(ECU, ABC):
     def __init__(self):
         super().__init__()
         self.rpm = 0
+        if 'RPM' in OBDHandler.commands:
+            OBDHandler.attach(self)
+            self.rpm = OBDHandler.commands['RPM']
+
 
     @abstractmethod
     def print(self):
         pass
 
-    def update(self, commands: Observable):
-        self.rpm = commands["rpm"]
+    def update(self, commands):
+        self.rpm = commands["RPM"]
 
 
 class RPMNumber(RPM):

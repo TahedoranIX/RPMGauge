@@ -7,23 +7,46 @@ from constants import PORT, WAIT_REFRESH_OBD
 from Interfaces.lcdhandler import LCDHandler
 from obd import obd
 
-
 class OBDHandler(Observable, object):
     observers: List[Observer] = []
     printer = None
     obd = None
-    commands = {}
+    commands = {
+        "SPEED": None,
+        "RPM": None,
+        "COOLANT_TEMP": None,
+        "THROTTLE_POS": None,
+        "MAF": None,
+        "FUEL_RATE": None,
+        "OIL_TEMP": None,
+    }
     exit = False
 
     @classmethod
-    def __init__(cls, printhub=LCDHandler) -> None:
-        #obd.logger.setLevel(obd.logging.DEBUG)
+    def __init__(cls, printhub) -> None:
+        # obd.logger.setLevel(obd.logging.DEBUG)
         cls.printer = printhub
         cls.obd = cls.connection()
-        cls.commands = {"dtc": cls.obd.query(obd.commands.GET_DTC).value}
+        cls.initCommands()
         cls.exit = False
         thread = Thread(target=cls.tick)
         thread.start()
+
+    @classmethod
+    def initCommands(cls):
+        invalid = []
+        for comm in cls.commands:
+            if cls.obd.supports(obd.commands[comm]):
+                cls.commands[comm] = cls.obd.query(obd.commands[comm]).value.magnitude
+            else:
+                invalid.append(comm)
+        for key in invalid:
+            del cls.commands[key]
+
+        if cls.obd.supports(obd.commands.GET_DTC):
+            cls.commands['GET_DTC'] = cls.obd.query(obd.commands.GET_DTC).value
+        else:
+            cls.commands['GET_DTC'] = []
 
     @classmethod
     def __del__(cls):
@@ -48,10 +71,6 @@ class OBDHandler(Observable, object):
             return cls.connection()
 
     @classmethod
-    def getCommands(cls):
-        return cls.commands
-
-    @classmethod
     def attach(cls, observer: Observer) -> None:
         cls.observers.append(observer)
 
@@ -67,17 +86,14 @@ class OBDHandler(Observable, object):
     @classmethod
     def getParams(cls):
         try:
-            cls.commands["speed"] = int(cls.obd.query(obd.commands.SPEED).value.magnitude)
-            cls.commands["rpm"] = str(cls.obd.query(obd.commands.RPM).value.magnitude)
-            cls.commands["coolant"] = str(cls.obd.query(obd.commands.COOLANT_TEMP).value.magnitude)
-            cls.commands["throttle"] = int(cls.obd.query(obd.commands.THROTTLE_POS).value.magnitude)
-            cls.commands["maf"] = float(cls.obd.query(obd.commands.MAF).value.magnitude)
+            for comm in cls.commands:
+                if comm != 'GET_DTC':
+                    cls.commands[comm] = cls.obd.query(obd.commands[comm]).value.magnitude
+
         except Exception as e:
-            cls.commands["speed"] = 0
-            cls.commands["rpm"] = 0
-            cls.commands["coolant"] = 0
-            cls.commands["throttle"] = 0
-            cls.commands["maf"] = 0
+            for comm in cls.commands:
+                if comm != 'GET_DTC':
+                    cls.commands[comm] = 0
             cls.notify()
             cls.obd = cls.connection()
 
