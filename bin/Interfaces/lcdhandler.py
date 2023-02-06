@@ -9,7 +9,7 @@ from lib.LCDLibrary.lcd import LCD
 class LCDHandler(PrintHub, object):
     lcd = None
     @classmethod
-    def __init__(cls, d4=None, d5=None, d6=None, d7=None, en=None, rs=None):
+    def __init__(cls, d4, d5, d6, d7, en, rs):
         cls.lcd = LCD(d4, d5, d6, d7, en, rs)
 
     @classmethod

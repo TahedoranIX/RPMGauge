@@ -4,7 +4,6 @@ import time as t
 from Observers.observable import Observable
 from Observers.observer import Observer
 from constants import PORT, WAIT_REFRESH_OBD
-from Interfaces.lcdhandler import LCDHandler
 from obd import obd
 
 class OBDHandler(Observable, object):
@@ -58,6 +57,7 @@ class OBDHandler(Observable, object):
     @classmethod
     def connection(cls):
         try:
+            cls.printer.print("Connecting...")
             connection = obd.OBD(PORT)
             while not connection.is_connected():
                 cls.printer.print("Not connected")
