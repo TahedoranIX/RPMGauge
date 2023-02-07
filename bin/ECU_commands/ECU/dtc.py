@@ -6,8 +6,7 @@ from ECU_commands.ecu import ECU
 
 class DtcScreen(ECU):
     def __init__(self) -> None:
-        self.dtcCodes = []
-        self.dtcCodes = OBDHandler.commands["GET_DTC"]
+        self.dtcCodes = OBDHandler.commands['GET_DTC']
         self.actualCode = 0  # Actual code we're looking in.
         self.clearCounter = 0
 
@@ -20,28 +19,25 @@ class DtcScreen(ECU):
             self.actualCode = self.actualCode % len(self.dtcCodes)
 
     def checkCleanButton(self):
-        if Encoder.getButtonValue():
-            self.clearCounter += TICK_CLEAN_CODES
-        else:
-            self.clearCounter = 0
+        self.clearCounter = TICK_CLEAN_CODES + self.clearCounter if Encoder.getButtonValue() else 0
 
     def cleanCodes(self):
         self.checkCleanButton()
         if self.clearCounter >= WAIT_CLEAN_CODES:
             self.clearCounter = 0
             OBDHandler.clearCodes()
-            self.dtcCodes = OBDHandler.commands["dtc"]
+            self.dtcCodes = OBDHandler.commands["GET_DTC"]
 
     def checkDtc(self):
         actualCode = "No ML codes"
         if len(self.dtcCodes):
             self.navigateInCodes()
-            self.cleanCodes()
             code = self.dtcCodes[self.actualCode][1]
             if code == "":  # Library doesn't know how to describe this code.
                 actualCode = "Vehicle-specific code"
             else:
                 actualCode = code
+            self.cleanCodes()
         return str(actualCode)
 
     def print(self):

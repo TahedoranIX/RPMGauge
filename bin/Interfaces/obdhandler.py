@@ -33,13 +33,13 @@ class OBDHandler(Observable, object):
 
     @classmethod
     def initCommands(cls):
-        invalid = []
-        for comm in cls.commands:
-            if cls.obd.supports(obd.commands[comm]):
-                cls.commands[comm] = cls.obd.query(obd.commands[comm]).value.magnitude
+        unsupported = []
+        for key in cls.commands:
+            if cls.obd.supports(obd.commands[key]):
+                cls.commands[key] = cls.obd.query(obd.commands[key]).value.magnitude
             else:
-                invalid.append(comm)
-        for key in invalid:
+                unsupported.append(key)
+        for key in unsupported:
             del cls.commands[key]
 
         if cls.obd.supports(obd.commands.GET_DTC):
@@ -86,14 +86,14 @@ class OBDHandler(Observable, object):
     @classmethod
     def getParams(cls):
         try:
-            for comm in cls.commands:
-                if comm != 'GET_DTC':
-                    cls.commands[comm] = cls.obd.query(obd.commands[comm]).value.magnitude
+            for key in cls.commands:
+                if key != 'GET_DTC':
+                    cls.commands[key] = cls.obd.query(obd.commands[key]).value.magnitude
 
         except Exception as e:
-            for comm in cls.commands:
-                if comm != 'GET_DTC':
-                    cls.commands[comm] = 0
+            for key in cls.commands:
+                if key != 'GET_DTC':
+                    cls.commands[key] = 0
             cls.notify()
             cls.obd = cls.connection()
 
@@ -101,9 +101,9 @@ class OBDHandler(Observable, object):
     def clearCodes(cls):
         try:
             cls.obd.query(obd.commands.CLEAR_DTC)
-            cls.commands["dtc"] = cls.obd.query(obd.commands.GET_DTC).value
-            if len(cls.commands["dtc"]):
-                raise Exception('Cleaning error')
+            cls.commands["GET_DTC"] = cls.obd.query(obd.commands.GET_DTC).value
+            if len(cls.commands["GET_DTC"]):
+                raise Exception()
 
         except Exception as e:
             cls.printer.print("Cleaning error")

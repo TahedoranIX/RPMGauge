@@ -12,10 +12,11 @@ class TimeTurbo(ECU):
             OBDHandler.attach(self)
 
     def update(self, commands):
-        if commands["SPEED"] < MINIMUM_SPEED and not self.stopped:
+        speed = int(commands['SPEED'])
+        if speed < MINIMUM_SPEED and not self.stopped:
             self.stopped = True
             self.finalTime = t.time() + WAIT_TURBOTIME
-        elif commands["SPEED"] > MINIMUM_SPEED and self.stopped:
+        elif speed > MINIMUM_SPEED and self.stopped:
             self.stopped = False
 
     def print(self):

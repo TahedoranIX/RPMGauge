@@ -19,7 +19,7 @@ class RPM(ECU, ABC):
         pass
 
     def update(self, commands):
-        self.rpm = commands["RPM"]
+        self.rpm = float(commands["RPM"])
 
 
 class RPMNumber(RPM):
@@ -36,7 +36,7 @@ class RPMGraph(RPM):
         self.rpmSegments = int((MAXIMUM_RPM - MINIMUM_RPM) / 16)
 
     def print(self):
-        segments = int((float(self.rpm) - MINIMUM_RPM) / self.rpmSegments)
+        segments = int((self.rpm - MINIMUM_RPM) / self.rpmSegments)
         segmentString = ""
         while segments > 0:
             segmentString = segmentString + 'ÿ'

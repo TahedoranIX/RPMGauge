@@ -10,7 +10,7 @@ class Coolant(ECU):
             self.coolOBD = OBDHandler.commands['COOLANT_TEMP']
 
     def update(self, commands):
-        self.coolOBD = commands["COOLANT_TEMP"]
+        self.coolOBD = int(commands["COOLANT_TEMP"])
 
     def print(self):
         return 'Temp: ' + str(self.coolOBD) + ' C'
