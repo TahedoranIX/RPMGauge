@@ -16,6 +16,9 @@ WAIT_REFRESH_PRINTHUB = 0.25
 TICK_RESET_GAS = WAIT_REFRESH_PRINTHUB
 WAIT_RESET_GAS = 12 * TICK_RESET_GAS
 KM_TO_SAVE_MPG = 0.5
+MAX_O2_VOL = 0.8
+MIN_O2_VOL = 0.1
+OK_O2_VOL = 0.45
 
 # timeturbo.py
 WAIT_TURBOTIME = 60  # Seconds
@@ -25,8 +28,5 @@ WAIT_CLEAN_CODES = WAIT_RESET_GAS
 TICK_CLEAN_CODES = WAIT_REFRESH_PRINTHUB
 
 # Raspberry config
-PORT = "/dev/pts/2"
-# PORT = "/dev/rfcomm99"  # Port we listen for OBD
-# FILE_HANDLER = '/home/pi/bin/mpg.dat'  # Directory to manage file and save the consumption.
-FILE_HANDLER = '/home/aleix/PycharmProjects/RPMGauge/mpg.dat'
-# FILE_HANDLER = '/home/pi/Documents/rpm/mpg.dat'
+# PORT = "/dev/pts/2"
+PORT = "/dev/rfcomm99"  # Port we listen for OBD

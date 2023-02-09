@@ -36,6 +36,7 @@ class RPMGraph(RPM):
         self.rpmSegments = int((MAXIMUM_RPM - MINIMUM_RPM) / 16)
 
     def print(self):
+        #TODO: NO HACERLO TAN ESPECIFICO PARA EL LCD, MARCARLO COMO GRAFICO Y YA SE ENCARGARA EL LCDHANDLER
         segments = int((self.rpm - MINIMUM_RPM) / self.rpmSegments)
         segmentString = ""
         while segments > 0:

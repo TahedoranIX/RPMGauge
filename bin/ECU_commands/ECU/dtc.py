@@ -32,11 +32,9 @@ class DtcScreen(ECU):
         actualCode = "No ML codes"
         if len(self.dtcCodes):
             self.navigateInCodes()
-            code = self.dtcCodes[self.actualCode][1]
-            if code == "":  # Library doesn't know how to describe this code.
-                actualCode = "Vehicle-specific code"
-            else:
-                actualCode = code
+            actualCode = self.dtcCodes[self.actualCode][1]
+            if actualCode == "":  # Library doesn't know how to describe this code.
+                actualCode = self.dtcCodes[self.actualCode][0]
             self.cleanCodes()
         return str(actualCode)
 

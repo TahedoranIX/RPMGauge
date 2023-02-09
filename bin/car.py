@@ -7,9 +7,6 @@ from Interfaces.printhub import PrintHub
 from menu import Menu
 import keyboard
 
-GASOLINE = 1
-DIESEL = 0
-
 
 class Car:
     density = GASOLINE_DENSITY
@@ -28,12 +25,9 @@ class Car:
         try:
             menu = 0
             while True:
-                # TODO: QUITAR LA COMPROBACIÓN DEL TECLADO PARA PASAR DE MENUS
-                # pip uninstall keyboard
                 self.printHub.print(self.menuList[menu].print())
-                menu += keyboard.is_pressed('up')
-                menu = menu % len(self.menuList)
-                # menu = self.encoder.getRotaryValue() % len(self.menuList)
+                menu = self.encoder.getRotaryValue() % len(self.menuList)
+
         except Exception as e:
             print(e)
             time.sleep(WAIT_REFRESH_OBD * 5)

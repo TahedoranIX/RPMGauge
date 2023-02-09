@@ -1,13 +1,11 @@
-from os.path import exists
-
-from constants import FILE_HANDLER
+from os import path
 
 
-class fileHandler(object):
-
+class FileHandler(object):
+    file = str(path.realpath(path.dirname(__file__)) + "/mpg.dat")
     @classmethod
     def saveData(cls, mpg, muestras, tank=0):
-        f = open(FILE_HANDLER, 'w')
+        f = open(FileHandler.file, 'w')
         f.write(str(mpg))
         f.write('\n')
         f.write(str(muestras))
@@ -18,13 +16,13 @@ class fileHandler(object):
     @classmethod
     def loadData(cls):
         try:
-            if exists(FILE_HANDLER):
-                f = open(FILE_HANDLER, 'r')
+            if path.exists(FileHandler.file):
+                f = open(FileHandler.file, 'r')
                 mpg = float(f.readline())
                 muestras = float(f.readline())
                 tank = float(f.readline())
             else:
-                f = open(FILE_HANDLER, 'x')
+                f = open(FileHandler.file, 'x')
                 f.write('0\n0\n0')
                 mpg = 0
                 muestras = 0

@@ -10,7 +10,6 @@ from lib.RotaryLibrary.encoder import Encoder
 from menu import Menu
 from Interfaces.obdhandler import OBDHandler
 
-
 encoder = Encoder(13, 19, 6)  # Raspberry casa
 lcd = LCDHandler(d4=26, d5=19, d6=13, d7=6, en=5, rs=0)  # Raspberry casa
 
