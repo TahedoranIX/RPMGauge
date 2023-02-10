@@ -9,8 +9,8 @@ from lib.RotaryLibrary.encoder import Encoder
 # https://obdsoftware.force.com/s/article/How-to-read-OBDII-live-data-A-mechanic-guide
 class Gas(ECU):
     def __init__(self):
-        self.litersConsumed, self.kmTraveled = FileHandler.loadData()
-        self.mpg = round(self.litersConsumed * 100.0 / (self.kmTraveled + 0.0000000001), 1)
+        self.litersConsumed, self.km100Traveled = FileHandler.loadData()
+        self.mpg = round(self.litersConsumed / self.km100Traveled, 1)
         self.instMpg = 0
         self.stopped = False
         self.savedFile = False
@@ -35,7 +35,7 @@ class Gas(ECU):
             self.commands[key] = commands[key]
         if int(self.commands["SPEED"]) <= MINIMUM_SPEED and not self.stopped:
             self.stopped = True
-            FileHandler.saveData(self.litersConsumed, self.kmTraveled)
+            FileHandler.saveData(self.litersConsumed, self.km100Traveled)
         elif int(self.commands["SPEED"]) > MINIMUM_SPEED and self.stopped:
             self.stopped = False
         self.calculateGas()
@@ -48,14 +48,14 @@ class Gas(ECU):
 
     def calculateGas(self):
         if not self.stopped:
-            self.kmTraveled += self.commands["SPEED"] / 3600.0 * WAIT_REFRESH_OBD
+            self.km100Traveled += (self.commands["SPEED"] / 3600.0 * WAIT_REFRESH_OBD) / 100.0
             if round(self.commands["THROTTLE_POS"]) > THROTTLE_MINIMUM:
                 literS = (self.commands["FUEL_RATE"] / 3600.0) if 'FUEL_RATE' in self.commands else self.mafConversion()
                 self.litersConsumed += literS * WAIT_REFRESH_OBD
                 self.instMpg = round(literS * 360000.0 / self.commands["SPEED"], 1)  # From L/s to L/100km
             else:
                 self.instMpg = 0.0
-            self.mpg = round(self.litersConsumed * 100.0 / self.kmTraveled, 1)  # L/100km
+            self.mpg = round(self.litersConsumed / self.km100Traveled, 1)  # L/100km
 
         else:  # If stopped, infinite consumption
             self.instMpg = '---'
@@ -68,8 +68,8 @@ class Gas(ECU):
         if self.resetCounter >= WAIT_RESET_GAS:
             self.resetCounter = 0
             self.litersConsumed = 0
-            self.kmTraveled = 0
-            FileHandler.saveData(self.litersConsumed, self.kmTraveled)
+            self.km100Traveled = 0.000000000001
+            FileHandler.saveData(self.litersConsumed, self.km100Traveled)
 
     def print(self):
         self.resetFuelData()
