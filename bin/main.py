@@ -18,10 +18,10 @@ lcd = LCDHandler(d4=26, d5=19, d6=13, d7=6, en=5, rs=0)  # Raspberry casa
 console = Console()
 obd = OBDHandler(console)
 
-menu1 = Menu(RPMNumber(), Coolant())
-menu2 = Menu(RPMGraph(), Gas())
-menu3 = Menu(Coolant(), TimeTurbo())
-menu4 = Menu(DtcScreen())
+menu1 = Menu([RPMNumber(), Coolant()])
+menu2 = Menu([RPMGraph(), Gas()])
+menu3 = Menu([Coolant(), TimeTurbo()])
+menu4 = Menu([DtcScreen()])
 
 main = Car(encoder, console, [menu1, menu2, menu3, menu4])
 # main.dieselCar()
