@@ -5,7 +5,6 @@ from constants import WAIT_REFRESH_OBD, GASOLINE_DENSITY, GASOLINE_STOICHIOMETRI
 from lib.RotaryLibrary.encoder import Encoder
 from Interfaces.printhub import PrintHub
 from menu import Menu
-import keyboard
 
 
 class Car:
