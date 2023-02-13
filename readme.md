@@ -1,6 +1,6 @@
 # Head-Up display
 Head-Up display based on OBDII for RPi zero W actually compatible with LCD screen 1602A and a rotary encoder.
-<img src="./doc/Images/apaisado.jpeg" alt="CRR" width="40%"/>
+<img src="./docs/Images/apaisado.jpeg" alt="CRR" width="40%"/>
 
 ### Motivations
 My Smart ForTwo only have a revcounter if you pay it as an extra, mine didn't come with that extra and I don't want to pay it, so I decided to create one myself taking advantage of the 
@@ -15,16 +15,16 @@ All the program is written in Python3 and relies on the PYTHON-OBD library which
 ### Functions
 The software can show:
 - Engine RPM.
-<img src="./doc/Images/rpm_racing.jpeg" alt="RPM" width="40%"/>
+<img src="./docs/Images/rpm_racing.jpeg" alt="RPM" width="40%"/>
 
 - Coolant Temperature.
-<img src="./doc/Images/temp_rpm.jpeg" alt="Coolant Temp" width="40%"/>
+<img src="./docs/Images/temp_rpm.jpeg" alt="Coolant Temp" width="40%"/>
 
 - Gasoline consumption in L/100km (based in MAF sensor).
-<img src="./doc/Images/fuel_rpm.jpeg" alt="Fuel Cons." width="40%"/>
+<img src="./docs/Images/fuel_rpm.jpeg" alt="Fuel Cons." width="40%"/>
 
 - Stop time to let the turbo cooldown.
-<img src="./doc/Images/cool_turbo.jpeg" alt="Turbo Time" width="40%"/>
+<img src="./docs/Images/cool_turbo.jpeg" alt="Turbo Time" width="40%"/>
 
 ### Dependencies
 In order to make RPMGauge, it needs PYTHON-OBD, a rotary-encoder library and my LCDLibrary; these last two are already 
@@ -44,7 +44,7 @@ $ python3 main.py
 ```
 
 ### Basic Usage
-<img src="./doc/NuevoPlanteamiento.png" alt="UML diagram" width="100%"/>
+<img src="./docs/NuevoPlanteamiento.png" alt="UML diagram" width="100%"/>
 
 The basic usage relies on the object Menu and ECU commands,
 every Menu actually handles a maximum of 2 ECU commands. 

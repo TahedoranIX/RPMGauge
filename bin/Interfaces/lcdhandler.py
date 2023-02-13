@@ -14,10 +14,13 @@ class LCDHandler(PrintHub, object):
         cls.lcd = LCD(d4, d5, d6, d7, en, rs)
 
     @classmethod
-    def print(cls, text: List):
+    def print(cls, text):
         cls.lcd.clearDisplay()
-        if len(text) > 1:
-            cls.lcd.writeMessage(text[0] + '\n' + text[1])
-        elif len(text) is 1:
+        if not isinstance(text, List):
             cls.lcd.writeMessage(text)
+        else:
+            if len(text) > 1:
+                cls.lcd.writeMessage(text[0] + '\n' + text[1])
+            else:
+                cls.lcd.writeMessage(text[0])
         time.sleep(WAIT_REFRESH_PRINTHUB)

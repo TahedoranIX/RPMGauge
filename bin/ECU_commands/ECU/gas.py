@@ -1,7 +1,7 @@
 from ECU_commands.ecu import ECU
 from Interfaces.obdhandler import OBDHandler
 from car import Car
-from constants import THROTTLE_MINIMUM, WAIT_RESET_GAS, MINIMUM_SPEED, KM_TO_SAVE_MPG, \
+from constants import THROTTLE_MINIMUM, WAIT_RESET_GAS, MINIMUM_SPEED, \
     WAIT_REFRESH_OBD, TICK_RESET_GAS, OK_O2_VOL
 from FileHandler import FileHandler
 from lib.RotaryLibrary.encoder import Encoder

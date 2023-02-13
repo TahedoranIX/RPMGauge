@@ -14,7 +14,7 @@ encoder = Encoder(13, 19, 6)  # Raspberry casa
 lcd = LCDHandler(d4=26, d5=19, d6=13, d7=6, en=5, rs=0)  # Raspberry casa
 
 # encoder = Encoder(20, 16, 21)  # Raspberry coche
-# lcd = LCDSingle(d4=23, d5=18, d6=15, d7=14, en=24, rs=25)  # Raspberry coche
+# lcd = LCDHandler(d4=23, d5=18, d6=15, d7=14, en=24, rs=25)  # Raspberry coche
 console = Console()
 obd = OBDHandler(console)
 
