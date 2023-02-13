@@ -8,7 +8,7 @@ from constants import MAXIMUM_RPM, MINIMUM_RPM
 class RPM(ECU, ABC):
     @abstractmethod
     def __init__(self):
-        self.rpm = 0
+        self.rpm = -99
         if 'RPM' in OBDHandler.commands:
             OBDHandler.attach(self)
             self.rpm = OBDHandler.commands['RPM']

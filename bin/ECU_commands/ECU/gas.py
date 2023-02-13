@@ -11,7 +11,7 @@ class Gas(ECU):
     def __init__(self):
         self.litersConsumed, self.km100Traveled = FileHandler.loadData()
         self.mpg = round(self.litersConsumed / self.km100Traveled, 1)
-        self.instMpg = 0
+        self.instMpg = -99
         self.stopped = False
         self.savedFile = False
         self.resetCounter = 0
