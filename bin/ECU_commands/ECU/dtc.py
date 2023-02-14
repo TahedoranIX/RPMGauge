@@ -1,8 +1,11 @@
-from constants import TICK_CLEAN_CODES, WAIT_CLEAN_CODES
+import logging
+
+from constants import TICK_CLEAN_CODES, WAIT_CLEAN_CODES, GENERAL
 from lib.RotaryLibrary.encoder import Encoder
 from Interfaces.obdhandler import OBDHandler
 from ECU_commands.ecu import ECU
 
+logger = logging.getLogger(GENERAL)
 
 class DtcScreen(ECU):
     def __init__(self) -> None:
@@ -15,15 +18,18 @@ class DtcScreen(ECU):
 
     def navigateInCodes(self):
         if Encoder.getButtonValue():
+            logger.debug('Navigating in codes.')
             self.actualCode += 1
             self.actualCode = self.actualCode % len(self.dtcCodes)
 
     def checkCleanButton(self):
         self.clearCounter = TICK_CLEAN_CODES + self.clearCounter if Encoder.getButtonValue() else 0
+        logger.debug('Tick count cleaning process: ' + str(self.clearCounter))
 
     def cleanCodes(self):
         self.checkCleanButton()
         if self.clearCounter >= WAIT_CLEAN_CODES:
+            logger.info('Cleaning dtc codes.')
             self.clearCounter = 0
             OBDHandler.clearCodes()
             self.dtcCodes = OBDHandler.commands["GET_DTC"]

@@ -8,6 +8,9 @@ DIESEL_STOICHIOMETRIC = 14.5  # air/diesel (grams)
 THROTTLE_MINIMUM = 7  # Min Throttle position to count as throttleless
 MINIMUM_SPEED = 5  # Min speed to consider stopped vehicle.
 
+# LoggerInterface
+GENERAL = 'RPMGAUGE'
+
 # main timeouts
 WAIT_REFRESH_OBD = 1  # (s)
 WAIT_REFRESH_PRINTHUB = 0.5  # (s)

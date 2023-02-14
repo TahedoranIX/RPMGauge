@@ -1,10 +1,14 @@
+import logging
+
 from ECU_commands.ecu import ECU
 from Interfaces.obdhandler import OBDHandler
 from car import Car
 from constants import THROTTLE_MINIMUM, WAIT_RESET_GAS, MINIMUM_SPEED, \
-    WAIT_REFRESH_OBD, TICK_RESET_GAS, OK_O2_VOL
+    WAIT_REFRESH_OBD, TICK_RESET_GAS, OK_O2_VOL, GENERAL
 from FileHandler import FileHandler
 from lib.RotaryLibrary.encoder import Encoder
+
+logger = logging.getLogger(GENERAL)
 
 # https://obdsoftware.force.com/s/article/How-to-read-OBDII-live-data-A-mechanic-guide
 class Gas(ECU):
@@ -16,21 +20,26 @@ class Gas(ECU):
         self.savedFile = False
         self.resetCounter = 0
         if 'THROTTLE_POS' and 'SPEED' in OBDHandler.commands:
+            logger.info('Throttle and speed supported.')
             self.commands = {
                 'THROTTLE_POS': OBDHandler.commands['THROTTLE_POS'],
                 'SPEED': OBDHandler.commands['SPEED'],
             }
             if 'FUEL_RATE' in OBDHandler.commands:
+                logger.info('Fuel rate supported.')
                 self.commands['FUEL_RATE'] = OBDHandler.commands['FUEL_RATE']
                 OBDHandler.attach(self)
             elif 'MAF' in OBDHandler.commands:
+                logger.info('MAF supported')
                 self.commands['MAF'] = OBDHandler.commands['MAF']
                 OBDHandler.attach(self)
 
         if 'O2_B1S1' in OBDHandler.commands:
+            logger.info('Lambda sensor supported')
             self.commands['O2_B1S1'] = OBDHandler.commands['O2_B1S1']
 
     def update(self, commands):
+        logger.debug('Updating Gas commands.')
         for key in self.commands:
             self.commands[key] = commands[key]
         if int(self.commands["SPEED"]) <= MINIMUM_SPEED and not self.stopped:
@@ -56,16 +65,21 @@ class Gas(ECU):
             else:
                 self.instMpg = 0.0
             self.mpg = round(self.litersConsumed / self.km100Traveled, 1)  # L/100km
-
+            logger.debug('liters consumed: ' + str(self.litersConsumed) + ', 100km traveled: ' + str(self.km100Traveled))
         else:  # If stopped, infinite consumption
             self.instMpg = '---'
 
     def checkButton(self):
-        self.resetCounter = (TICK_RESET_GAS + self.resetCounter) if Encoder.getButtonValue() else 0
+        if Encoder.getButtonValue():
+            self.resetCounter += TICK_RESET_GAS
+        else:
+            self.resetCounter = 0
+        logger.debug('Reset counter GAS value: ' + str(self.resetCounter))
 
     def resetFuelData(self):
         self.checkButton()
         if self.resetCounter >= WAIT_RESET_GAS:
+            logger.info('Resetting gas values.')
             self.resetCounter = 0
             self.litersConsumed = 0
             self.km100Traveled = 0.000000000001

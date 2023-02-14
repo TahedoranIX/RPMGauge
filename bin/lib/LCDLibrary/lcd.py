@@ -1,6 +1,6 @@
+import logging
 import RPi.GPIO as GPIO
 from time import sleep
-import logging
 
 LOW_TIME = 0.00004
 HIGH_TIME = 0.00153

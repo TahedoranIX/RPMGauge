@@ -1,11 +1,13 @@
+import logging
 import time
 from typing import List
 
-from constants import WAIT_REFRESH_OBD, GASOLINE_DENSITY, GASOLINE_STOICHIOMETRIC, DIESEL_DENSITY, DIESEL_STOICHIOMETRIC
+from constants import WAIT_REFRESH_OBD, GASOLINE_DENSITY, GASOLINE_STOICHIOMETRIC, DIESEL_DENSITY, \
+    DIESEL_STOICHIOMETRIC, GENERAL
 from lib.RotaryLibrary.encoder import Encoder
 from Interfaces.printhub import PrintHub
 from menu import Menu
-
+logger = logging.getLogger(GENERAL)
 
 class Car:
     density = GASOLINE_DENSITY
