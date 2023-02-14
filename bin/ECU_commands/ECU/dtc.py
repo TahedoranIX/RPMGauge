@@ -18,18 +18,18 @@ class DtcScreen(ECU):
 
     def navigateInCodes(self):
         if Encoder.getButtonValue():
-            logger.debug('Navigating in codes.')
+            logger.debug('DTC - Navigating in codes.')
             self.actualCode += 1
             self.actualCode = self.actualCode % len(self.dtcCodes)
 
     def checkCleanButton(self):
         self.clearCounter = TICK_CLEAN_CODES + self.clearCounter if Encoder.getButtonValue() else 0
-        logger.debug('Tick count cleaning process: ' + str(self.clearCounter))
+        logger.debug('DTC - Tick count cleaning process: ' + str(self.clearCounter))
 
     def cleanCodes(self):
         self.checkCleanButton()
         if self.clearCounter >= WAIT_CLEAN_CODES:
-            logger.info('Cleaning dtc codes.')
+            logger.info('DTC - Cleaning dtc codes.')
             self.clearCounter = 0
             OBDHandler.clearCodes()
             self.dtcCodes = OBDHandler.commands["GET_DTC"]

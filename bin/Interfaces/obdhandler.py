@@ -39,17 +39,17 @@ class OBDHandler(Observable, object):
         unsupported = []
         for key in cls.commands:
             if cls.obd.supports(obd.commands[key]):
-                logger.debug('Command: ' + key + ' supported.')
+                logger.debug('OBD - Command: ' + key + ' supported.')
                 cls.commands[key] = cls.obd.query(obd.commands[key]).value.magnitude
             else:
-                logger.debug('Command: ' + key + ' not supported.')
+                logger.debug('OBD - Command: ' + key + ' not supported.')
                 unsupported.append(key)
 
         for key in unsupported:
             del cls.commands[key]
 
         if cls.obd.supports(obd.commands.GET_DTC):
-            logger.debug('Command: get_dtc supported.')
+            logger.debug('OBD - Command: get_dtc supported.')
             cls.commands['GET_DTC'] = cls.obd.query(obd.commands.GET_DTC).value
         else:
             cls.commands['GET_DTC'] = []
@@ -64,6 +64,7 @@ class OBDHandler(Observable, object):
     @classmethod
     def connection(cls):
         try:
+            logger.info('OBD - Connecting to OBD Device')
             cls.printer.print("Connecting...")
             connection = obd.OBD(PORT)
             while not connection.is_connected():
@@ -73,6 +74,7 @@ class OBDHandler(Observable, object):
                 connection = obd.OBD(PORT, fast=False, timeout=30)
             return connection
         except:
+            logger.error("OBD - Couldn't connect to OBD")
             cls.printer.print("Problems OBD")
             t.sleep(2)
             return cls.connection()
@@ -87,37 +89,39 @@ class OBDHandler(Observable, object):
 
     @classmethod
     def notify(cls) -> None:
-        for observer in cls.observers:
-            observer.update(OBDHandler.commands)
+        try:
+            for observer in cls.observers:
+                observer.update(OBDHandler.commands)
+        except:
+            logger.error("OBD - Notify error")
 
     @classmethod
     def getParams(cls):
         try:
-            logger.debug('Registering params from OBD.')
+            logger.debug('OBD - Registering params from OBD')
             for key in cls.commands:
                 if key != 'GET_DTC':
                     cls.commands[key] = cls.obd.query(obd.commands[key]).value.magnitude
 
-        except Exception as e:
-            logger.error('Error while getting params from OBD.')
+        except:
+            logger.error('OBD - GetParams error')
             for key in cls.commands:
                 if key != 'GET_DTC':
                     cls.commands[key] = 0
             cls.notify()
-            logger.error('Resetting connection.')
             cls.obd = cls.connection()
 
     @classmethod
     def clearCodes(cls):
         try:
-            logger.debug('Clearing dtc in OBD.')
+            logger.debug('OBD - Clearing dtc in OBD')
             cls.obd.query(obd.commands.CLEAR_DTC)
             cls.commands["GET_DTC"] = cls.obd.query(obd.commands.GET_DTC).value
             if len(cls.commands["GET_DTC"]):
                 raise Exception()
 
         except Exception as e:
-            logger.error('Error cleaning dtc in OBD.')
+            logger.error('OBD - Error cleaning dtc in OBD')
             cls.printer.print("Cleaning error")
 
 
