@@ -21,7 +21,6 @@ class OBDHandler(Observable, object):
         "MAF": None,
         "FUEL_RATE": None,
         "OIL_TEMP": None,
-        "O2_B1S1": None
     }
     exit = False
 

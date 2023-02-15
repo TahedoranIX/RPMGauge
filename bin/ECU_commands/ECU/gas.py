@@ -34,10 +34,6 @@ class Gas(ECU):
                 self.commands['MAF'] = OBDHandler.commands['MAF']
                 OBDHandler.attach(self)
 
-        if 'O2_B1S1' in OBDHandler.commands:
-            logger.info('GAS - Lambda sensor supported')
-            self.commands['O2_B1S1'] = OBDHandler.commands['O2_B1S1']
-
     def update(self, commands):
         logger.debug('GAS - Updating Gas commands')
         for key in self.commands:
@@ -50,10 +46,8 @@ class Gas(ECU):
         self.calculateGas()
 
     def mafConversion(self):
-        #TODO: NO TIENE BUENA PINTA ESTO DEL 02
-        lambdaMix = (OK_O2_VOL / self.commands['O2_B1S1']) if 'O2_B1S1' in self.commands else 1
         return (self.commands["MAF"] / (
-                Car.stoichiometric * lambdaMix * Car.density))  # g/s of air to L/s of gas.
+                Car.stoichiometric * Car.density))  # g/s of air to L/s of gas.
 
     def calculateGas(self):
         if not self.stopped:
