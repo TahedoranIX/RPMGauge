@@ -61,7 +61,9 @@ class Gas(ECU):
             self.mpg = round(self.litersConsumed / self.km100Traveled, 1)  # L/100km
             logger.debug('GAS - liters consumed: ' + str(self.litersConsumed) + ', 100km traveled: ' + str(self.km100Traveled))
         else:  # If stopped, infinite consumption
-            self.instMpg = '---'
+            literS = (self.commands["FUEL_RATE"] / 3600.0) if 'FUEL_RATE' in self.commands else self.mafConversion()
+            self.litersConsumed += literS * WAIT_REFRESH_OBD
+            self.instMpg = '-.-'
 
     def checkButton(self):
         if Encoder.getButtonValue():
