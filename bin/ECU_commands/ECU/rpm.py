@@ -1,23 +1,25 @@
 from abc import ABC, abstractmethod
 
 from ECU_commands.ecu import ECU
-from Observers.observable import Observable
+from Interfaces.obdhandler import OBDHandler
 from constants import MAXIMUM_RPM, MINIMUM_RPM
 
 
 class RPM(ECU, ABC):
     @abstractmethod
     def __init__(self):
-        super().__init__()
-        self.rpm = 0
+        self.rpm = -99
+        if 'RPM' in OBDHandler.commands:
+            OBDHandler.attach(self)
+            self.rpm = OBDHandler.commands['RPM']
+
 
     @abstractmethod
     def print(self):
         pass
 
-    def update(self, commands: Observable):
-        command = commands.getCommands()
-        self.rpm = command["rpm"]
+    def update(self, commands):
+        self.rpm = float(commands["RPM"])
 
 
 class RPMNumber(RPM):
@@ -27,15 +29,17 @@ class RPMNumber(RPM):
     def print(self):
         return 'RPM: ' + str(self.rpm)
 
+
 class RPMGraph(RPM):
     def __init__(self):
         super().__init__()
         self.rpmSegments = int((MAXIMUM_RPM - MINIMUM_RPM) / 16)
 
     def print(self):
-        segment = int((float(self.rpm) - MINIMUM_RPM) / self.rpmSegments)
-        segmentList = ""
-        while segment > 0:
-            segmentList = segmentList + 'ÿ'
-            segment = segment - 1
-        return segmentList
+        #TODO: NO HACERLO TAN ESPECIFICO PARA EL LCD, MARCARLO COMO GRAFICO Y YA SE ENCARGARA EL LCDHANDLER
+        segments = int((self.rpm - MINIMUM_RPM) / self.rpmSegments)
+        segmentString = ""
+        while segments > 0:
+            segmentString = segmentString + 'ÿ'
+            segments = segments - 1
+        return segmentString

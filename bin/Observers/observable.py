@@ -26,6 +26,3 @@ class Observable(ABC):
         Notify all observers about an event.
         """
         pass
-
-    def getCommands(self):
-        pass

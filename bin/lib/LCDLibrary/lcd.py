@@ -1,50 +1,52 @@
+import logging
 import RPi.GPIO as GPIO
 from time import sleep
 
 LOW_TIME = 0.00004
 HIGH_TIME = 0.00153
 GPIO.setwarnings(False)
+logger = logging.getLogger(__name__)
+
 
 class LCD:
 
-
     def __init__(self, d4, d5, d6, d7, en, rs):
-        """Pin set and LCD init"""
+        logger.info("=====LCDLibrary starting...=====")
 
-        #######################
-        # pin assignment
-        #######################
         GPIO.setmode(GPIO.BCM)
-        self.__datas = [d7,d6,d5,d4]
+        self.__data = [d7, d6, d5, d4]
         self.__en = en
         self.__rs = rs
         for pin in (rs, en, d4, d5, d6, d7):
             GPIO.setup(pin, GPIO.OUT)
+        logger.debug('All pins set to output')
 
-        #######################
-        # begin INIT
-        #######################
+        logger.info('Beginning lcd init.')
+        self.__sendCommand(rs=0, data=[0, 0, 1, 1, 0, 0, 1, 1], time=LOW_TIME)
+        self.__sendCommand(rs=0, data=[0, 0, 1, 1, 0, 0, 1, 0], time=LOW_TIME)
 
-        #function set1
-        self.__sendCommand(rs=0, data=[0,0,1,1,0,0,1,1], time=LOW_TIME)
-        self.__sendCommand(rs=0, data=[0,0,1,1,0,0,1,0], time=LOW_TIME)
-        #function set2
+        logger.debug('Function Set 1 Completed.')
+
         self.__functionSet()
-        #function set3
+        logger.debug('Function Set 2 Completed.')
+
         self.__functionSet()
-        #display on
+        logger.debug('Function Set 3 Completed.')
+
         self.display()
-        #clear
+        logger.debug('Display on Completed.')
+
         self.clearDisplay()
-        #entry mode
+        logger.debug('Display cleared Completed.')
+
         self.__entryMode()
-        #######################
-        # end INIT
-        #######################
+        logger.debug('Display EntryMode Completed.')
+
+        logger.info('=====Library initialized=====')
 
     def __del__(self):
         self.clearDisplay()
-        #GPIO.cleanup()
+        # GPIO.cleanup()
 
     def __enviar(self):
         ''' Trigger PIN ENABLE'''
@@ -60,16 +62,19 @@ class LCD:
         :param data: 8bit list data.
         :param time: HIGH_TIME/LOW_TIME
         """
+        logger.info('Sending data: ' + str(data))
         GPIO.output(self.__rs, rs)
-        GPIO.output(self.__datas, data[:4])
+        GPIO.output(self.__data, data[:4])
         self.__enviar()
-        GPIO.output(self.__datas, data[4:])
+        logger.debug('first data half sent.')
+        GPIO.output(self.__data, data[4:])
         self.__enviar()
+        logger.debug('second data half sent.')
         sleep(time)
 
     def __functionSet(self):
         """ Set bit mode LCD, only used in init"""
-        self.__sendCommand(rs=0, data=[0,0,1,0,1,0,0,0], time=LOW_TIME)
+        self.__sendCommand(rs=0, data=[0, 0, 1, 0, 1, 0, 0, 0], time=LOW_TIME)
 
     def __setCGRAM(self, address):
         """
@@ -77,7 +82,8 @@ class LCD:
 
         :param address: 6bit Address(5-0)
         """
-        self.__sendCommand(rs=0, data=[0,1,[0],address[1],address[2],address[3],address[4],address[5]], time=LOW_TIME)
+        self.__sendCommand(rs=0, data=[0, 1, [0], address[1], address[2], address[3], address[4], address[5]],
+                           time=LOW_TIME)
 
     def __setDDRAM(self, address):
         """
@@ -85,7 +91,9 @@ class LCD:
 
         :param address: 7bit Address(6-0)
         """
-        self.__sendCommand(rs=0, data=[1,address[0],address[1],address[2],address[3],address[4],address[5],address[6]], time=LOW_TIME)
+        self.__sendCommand(rs=0,
+                           data=[1, address[0], address[1], address[2], address[3], address[4], address[5], address[6]],
+                           time=LOW_TIME)
 
     def writeRAM(self, data):
         """
@@ -95,22 +103,22 @@ class LCD:
         """
         self.__sendCommand(rs=1, data=data, time=LOW_TIME)
 
-    def __entryMode(self,cursor=1,display=0):
+    def __entryMode(self, cursor=1, display=0):
         """
         Set moving direction of cursor and display.
 
         :param cursor: set orientation of cursor
         :param display: shift entire display
         """
-        self.__sendCommand(rs=0, data=[0,0,0,0,0,1,cursor,display], time=LOW_TIME)
+        self.__sendCommand(rs=0, data=[0, 0, 0, 0, 0, 1, cursor, display], time=LOW_TIME)
 
     def clearDisplay(self):
         """ Clear all display data"""
-        self.__sendCommand(rs=0, data=[0,0,0,0,0,0,0,1], time=HIGH_TIME)
-        
+        self.__sendCommand(rs=0, data=[0, 0, 0, 0, 0, 0, 0, 1], time=HIGH_TIME)
+
     def home(self):
         """ Return cursor to home"""
-        self.__sendCommand(rs=0, data=[0,0,0,0,0,0,1,0], time=HIGH_TIME)
+        self.__sendCommand(rs=0, data=[0, 0, 0, 0, 0, 0, 1, 0], time=HIGH_TIME)
 
     def display(self, display=1, cursor=0, blink=0):
         """
@@ -120,7 +128,7 @@ class LCD:
         :param cursor: Show cursor
         :param blink: Show blinking cursor
         """
-        self.__sendCommand(rs=0, data=[0,0,0,0,1,display,cursor,blink], time=LOW_TIME)
+        self.__sendCommand(rs=0, data=[0, 0, 0, 0, 1, display, cursor, blink], time=LOW_TIME)
 
     def moveCursor(self, cursor=0, direction=1, times=1):
         """
@@ -131,31 +139,26 @@ class LCD:
         :param times: Times to move
         """
         for i in range(times):
-            self.__sendCommand(rs=0, data=[0,0,0,1,cursor,direction,0,0], time=LOW_TIME)
-    
+            self.__sendCommand(rs=0, data=[0, 0, 0, 1, cursor, direction, 0, 0], time=LOW_TIME)
+
     def textLeftRight(self):
         """ Writes to the right (Normal)"""
 
-        self.__sendCommand(rs=0, data=[0,0,0,0,0,1,1,0], time=LOW_TIME)
-        
+        self.__sendCommand(rs=0, data=[0, 0, 0, 0, 0, 1, 1, 0], time=LOW_TIME)
+
     def textRightLeft(self):
         """ Writes to the left ¿?"""
-        self.__sendCommand(rs=0, data=[0,0,0,0,0,1,0,0], time=LOW_TIME)
+        self.__sendCommand(rs=0, data=[0, 0, 0, 0, 0, 1, 0, 0], time=LOW_TIME)
 
     def writeMessage(self, message):
         """Write message in display """
         for char in message:
             if char == '\n':
-                self.__setDDRAM([1,0,0,0,0,0,0])
+                self.__setDDRAM([1, 0, 0, 0, 0, 0, 0])
             else:
                 dataMessage = []
                 letra = bin(ord(char))[2:].zfill(8)
                 for binario in letra:
                     dataMessage.append(int(binario))
+                logger.debug('Binary conversion of '+char+' -> '+str(dataMessage))
                 self.writeRAM(dataMessage)
-
-if __name__ == "__main__":
-    h = LCD(d4=23,d5=18,d6=15,d7=14,en=24,rs=25)
-    h.writeMessage("hola que tal\nyo bien")
-    sleep(2)
-

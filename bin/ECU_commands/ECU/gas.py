@@ -1,70 +1,86 @@
+import logging
+
 from ECU_commands.ecu import ECU
-from constants import ESTEQUIOMETRICA, DENSIDAD_G, THROTTLE_MINIMUM, WAIT_RESET_GAS, MINIMUM_SPEED, KM_TO_SAVE_MPG, \
-    WAIT_TIME_OBD, WAIT_TIME_PRINTHUB
-from fileHandler import fileHandler
+from Interfaces.obdhandler import OBDHandler
+from car import Car
+from constants import THROTTLE_MINIMUM, WAIT_RESET_GAS, MINIMUM_SPEED, \
+    WAIT_REFRESH_OBD, TICK_RESET_GAS, OK_O2_VOL, GENERAL
+from FileHandler import FileHandler
 from lib.RotaryLibrary.encoder import Encoder
 
+logger = logging.getLogger(GENERAL)
 
+# https://obdsoftware.force.com/s/article/How-to-read-OBDII-live-data-A-mechanic-guide
 class Gas(ECU):
     def __init__(self):
-        super().__init__()
-        self.mpg, self.mpgSamples = fileHandler.loadData()
-        self.instMPG = 0
-        self.commands = {}
+        self.litersConsumed, self.km100Traveled = FileHandler.loadData()
+        self.mpg = round(self.litersConsumed / self.km100Traveled, 1)
+        self.instMpg = -99
         self.stopped = False
         self.savedFile = False
-        self.fuelMPGReset = 0
-        self.km = 0
-        self.auxMPG = 0
-        self.auxSample = 0
+        self.resetCounter = 0
+        if 'THROTTLE_POS' and 'SPEED' in OBDHandler.commands:
+            logger.info('GAS - Throttle and speed supported')
+            self.commands = {
+                'THROTTLE_POS': OBDHandler.commands['THROTTLE_POS'],
+                'SPEED': OBDHandler.commands['SPEED'],
+            }
+            if 'FUEL_RATE' in OBDHandler.commands:
+                logger.info('GAS - Fuel rate supported')
+                self.commands['FUEL_RATE'] = OBDHandler.commands['FUEL_RATE']
+                OBDHandler.attach(self)
+            elif 'MAF' in OBDHandler.commands:
+                logger.info('GAS - MAF supported')
+                self.commands['MAF'] = OBDHandler.commands['MAF']
+                OBDHandler.attach(self)
 
     def update(self, commands):
-        allCommands = commands.getCommands()
-        self.commands["speed"] = allCommands["speed"]
-        self.commands["throttle"] = allCommands["throttle"]
-        self.commands["maf"] = allCommands["maf"]
-        if self.commands["speed"] < MINIMUM_SPEED and not self.stopped:
+        logger.debug('GAS - Updating Gas commands')
+        for key in self.commands:
+            self.commands[key] = commands[key]
+        if int(self.commands["SPEED"]) <= MINIMUM_SPEED and not self.stopped:
             self.stopped = True
-            fileHandler.saveData(self.mpg, self.mpgSamples)
-        elif self.commands["speed"] > MINIMUM_SPEED and self.stopped:
+            FileHandler.saveData(self.litersConsumed, self.km100Traveled)
+        elif int(self.commands["SPEED"]) > MINIMUM_SPEED and self.stopped:
             self.stopped = False
         self.calculateGas()
 
+    def mafConversion(self):
+        return (self.commands["MAF"] / (
+                Car.stoichiometric * Car.density))  # g/s of air to L/s of gas.
+
     def calculateGas(self):
-        LPerS = float(self.commands["maf"]) / (
-                    ESTEQUIOMETRICA * DENSIDAD_G)  # Pasamos a de g/s de aire a L/s de gasolina
-        self.km += round((self.commands["speed"] / 3600 * WAIT_TIME_OBD), 2)
-        if not self.stopped:  # Si voy a velocidad mayor que parada, cuenta consumo.
-            if self.commands["throttle"] > THROTTLE_MINIMUM:  # Estoy acelerando?
-                self.instMPG = round(LPerS * (360000 / self.commands["speed"]), 1)  # Calculamos L/100km en base a velocidad y L/s
+        if not self.stopped:
+            self.km100Traveled += (self.commands["SPEED"] / 3600.0 * WAIT_REFRESH_OBD) / 100.0
+            if round(self.commands["THROTTLE_POS"]) > THROTTLE_MINIMUM:
+                literS = (self.commands["FUEL_RATE"] / 3600.0) if 'FUEL_RATE' in self.commands else self.mafConversion()
+                self.litersConsumed += literS * WAIT_REFRESH_OBD
+                self.instMpg = round(literS * 360000.0 / self.commands["SPEED"], 1)  # From L/s to L/100km
             else:
-                self.instMPG = 0.0
-            self.auxMPG = ((self.auxMPG * self.auxSample + self.instMPG) / (self.auxSample + 1))
-            self.auxSample += 1
-            if self.km >= KM_TO_SAVE_MPG:
-                self.mpg = ((self.mpg * self.mpgSamples + self.auxMPG) / (
-                            self.mpgSamples + 1))  # Realizamos la media de consumo.
-                self.mpgSamples += 1
-                self.km = 0
-                self.auxMPG = 0
-                self.auxSample = 0
-        else:  # Si voy a velocidad menor que parada, consumo infinito.
-            self.instMPG = '---'
+                self.instMpg = 0.0
+            self.mpg = round(self.litersConsumed / self.km100Traveled, 1)  # L/100km
+            logger.debug('GAS - liters consumed: ' + str(self.litersConsumed) + ', 100km traveled: ' + str(self.km100Traveled))
+        else:  # If stopped, infinite consumption
+            literS = (self.commands["FUEL_RATE"] / 3600.0) if 'FUEL_RATE' in self.commands else self.mafConversion()
+            self.litersConsumed += literS * WAIT_REFRESH_OBD
+            self.instMpg = '-.-'
 
     def checkButton(self):
         if Encoder.getButtonValue():
-            self.fuelMPGReset += WAIT_TIME_PRINTHUB
+            self.resetCounter += TICK_RESET_GAS
         else:
-            self.fuelMPGReset = 0
+            self.resetCounter = 0
+        logger.debug('GAS - Reset counter GAS value: ' + str(self.resetCounter))
 
     def resetFuelData(self):
         self.checkButton()
-        if self.fuelMPGReset >= WAIT_RESET_GAS:
-            self.fuelMPGReset = 0
-            self.mpg = 0
-            self.mpgSamples = 0
-            fileHandler.saveData(self.mpg, self.mpgSamples)
+        if self.resetCounter >= WAIT_RESET_GAS:
+            logger.info('GAS - Resetting gas values')
+            self.resetCounter = 0
+            self.litersConsumed = 0
+            self.km100Traveled = 0.000000000001
+            FileHandler.saveData(self.litersConsumed, self.km100Traveled)
 
     def print(self):
         self.resetFuelData()
-        return 'Fuel: ' + str(self.instMPG) + ' ' + str(round(self.mpg, 1))
+        return 'Fuel: ' + str(self.instMpg) + ' ' + str(self.mpg)

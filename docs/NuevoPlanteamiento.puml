@@ -54,11 +54,14 @@ package external_libraries <<Folder>> {
     }
 }
 
-class Coche {
+class Car {
++stoichiometric : int
++density : int
 -encoder : Encoder
 -printHub : PrintHub
 -menuList : List<Menu>
 +mainLoop()
++dieselCar()
 }
 
 class Coolant {
@@ -132,9 +135,9 @@ class TimeTurbo {
 }
 
 
-Coche o--> PrintHub
-Coche --> Menu
-Coche --> Encoder
+Car o--> PrintHub
+Car --> Menu
+Car --> Encoder
 Coolant --|> ECU
 Console ..|> PrintHub
 ECU ..|> Observer

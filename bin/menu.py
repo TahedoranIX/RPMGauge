@@ -1,10 +1,12 @@
+from typing import List
+
 
 class Menu:
-    def __init__(self, ecu1, ecu2=None):
-        self.ecuList = [ecu1, ecu2]
+    def __init__(self, ecuList: List):
+        self.ecuList = ecuList
 
     def print(self):
-        if self.ecuList[1] is None:
-            return self.ecuList[0].print()
-        return [self.ecuList[0].print(), self.ecuList[1].print()]
-
+        printList = []
+        for printing in self.ecuList:
+            printList.append(printing.print())
+        return printList

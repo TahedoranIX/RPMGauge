@@ -1,41 +1,41 @@
 # Head-Up display
-Head-Up display based on OBDII for RPi zero W actually compatible with LCD screen 1602A and a rotary encoder.
-<img src="./docs/Images/apaisado.jpeg" alt="CRR" width="40%"/>
+Cuentarrevoluciones hecho con RPi zero W con pantalla lcd 16x2 y rotary-encoder. Funciona mediante OBDII.
+<img src="./doc/Images/apaisado.jpeg" alt="CRR" width="40%"/>
 
 ### Motivations
-My Smart ForTwo only have a revcounter if you pay it as an extra, mine didn't come with that extra and I don't want to pay it, so I decided to create one myself taking advantage of the 
-OBD-II protocol.
+Mi Smart Fortwo solo tiene cuentarrevoluciones si lo pagas como un extra, el mío no vino con ese extra y no me apetece pagar más por él así que decidí hacerme uno utilizando el protocolo
+ OBD-II.
 
-The initial idea was to only get the rpm of the car, but as you will see, I implemented much more things.
- 
+La idea inicial es solo mostrar las revoluciones del motor pero como veréis, he implementado más cosas. 
+
 ### What? How does it work
 
-All the program is written in Python3 and relies on the PYTHON-OBD library which extracts de data from the car.
+Todo el programa esta escrito en Python3 y ejecutado en una RaspberryPi Zero W (versión con WiFi y Bluetooth).
 
-### Functions
-The software can show:
-- Engine RPM.
-<img src="./docs/Images/rpm_racing.jpeg" alt="RPM" width="40%"/>
+La conexión al puerto OBD se realiza mediante Bluetooth y la librería python-OBD.
 
-- Coolant Temperature.
-<img src="./docs/Images/temp_rpm.jpeg" alt="Coolant Temp" width="40%"/>
+La pantalla utilizada es la típica LCD de 16x2 píxeles y adicionalmente utiliza un Rotary encoder para poder navegar entre distintos menús.
 
-- Gasoline consumption in L/100km (based in MAF sensor).
-<img src="./docs/Images/fuel_rpm.jpeg" alt="Fuel Cons." width="40%"/>
+### Funciones Actuales
+Actualmente el programa puede mostrar:
+- RPM del motor.
+<img src="./doc/Images/rpm_racing.jpeg" alt="RPM" width="40%"/>
 
-- Stop time to let the turbo cooldown.
-<img src="./docs/Images/cool_turbo.jpeg" alt="Turbo Time" width="40%"/>
+- Temperatura del Refrigerante.
+<img src="./doc/Images/temp_rpm.jpeg" alt="Coolant Temp" width="40%"/>
+
+- Consumo de gasolina (aproximado gracias al sensor MAF).
+<img src="./doc/Images/fuel_rpm.jpeg" alt="Fuel Cons." width="40%"/>
+
+- Tiempo de parada para cuidar el turbo.
+<img src="./doc/Images/cool_turbo.jpeg" alt="Turbo Time" width="40%"/>
 
 ### Dependencies
 In order to make RPMGauge, it needs PYTHON-OBD, a rotary-encoder library and my LCDLibrary; these last two are already 
-implemented in the project. 
-In my car, the release version of PYTHON-OBD doesn't work, so download the zip of the main branch and install it via:
+implemented in the project.
+But the PYTHON-OBD you will need to install it:
 ```Shell
 $ pip install .
-```
-or you can also try:
-```Shell
-$ pip3 install .
 ```
 
 ### Installation
@@ -47,50 +47,16 @@ $ pip3 install .
 $ python3 main.py
 ```
 
-### Basic Usage
-<img src="./docs/NuevoPlanteamiento.png" alt="UML diagram" width="100%"/>
-
-The basic usage relies on the object Menu and ECU commands,
-every Menu actually handles a maximum of 2 ECU commands. 
-For example, to create a menu which displays the RPM in number and the 
-gasoline consumption will be created this way:
-```Code
-Menu(RPMNumber(), Gas())
-```
-After created a Menu we now can create an object Car(),
-in this object we will specify the encoder object, the printer to use and a list of menus.
-It also contains the mainLoop and other features like consider a diesel car.
-Another basic example:
-```Code
-encoder = Encoder(13, 19, 6)
-lcd = LCDHandler(d4=26, d5=19, d6=13, d7=6, en=5, rs=0)
-main = Car(encoder, lcd, [menu1, menu2, menu3, menu4])
-main.dieselCar()  # Consider a diesel car
-main.mainLoop()
-```
-You can take advantage of the already programmed main.py
-
-### Actual commands
-```Code
-Coolant()
-DtcScreen()
-RPMNumber()
-RPMGraph()
-Gas()
-TimeTurbo()
-```
-
 ## Información Adicional
 
 ### Librerías
 
 #### LCD Library
-Library for the controller **ST7066U** made by myself. Much faster than Adafruit one.
+Librería para controlador **ST7066U** hecha por mí. Al ser más específica que la Adafruit funciona a mayor velocidad.
 
 #### Rotary encoder Library
 Le he realizado unos cambios para que funcione con el rotary conectado de GPIO -> GND, 
 he añadido la función de un botón para los rotary con botón y lo he tratado como variable global.
-
 
 #### Modelos 3D
 Modelos 3D en formato stl de la caja en carpeta **doc/Modelos**
@@ -99,7 +65,7 @@ Modelos 3D en formato stl de la caja en carpeta **doc/Modelos**
 Cableados a la RPi en carpeta **doc/Images**
 
 ### Productos:
-- [Librería OBD original](https://github.com/brendan-w/python-OBD) 
+- [Librería OBD original](https://github.com/brendan-w/python-OBD) Instalar la master branch, no el release.
 - [Librería Rotary encoder original](https://github.com/nstansby/rpi-rotary-encoder-python)
 - [Librería original LCD Adafruit](https://github.com/adafruit/Adafruit_Python_CharLCD)
 - [Pantalla](https://es.aliexpress.com/item/32397063365.html?spm=a2g0o.productlist.0.0.779a3a31I4vpfB&algo_pvid=adf133c7-1ed9-4de1-b14b-2ab022e3496c&algo_exp_id=adf133c7-1ed9-4de1-b14b-2ab022e3496c-3&pdp_ext_f=%7B%22sku_id%22%3A%2212000026861398048%22%7D&pdp_pi=-1%3B1.9%3B-1%3B-1%40salePrice%3BEUR%3Bsearch-mainSearch): LCD 1602
